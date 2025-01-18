@@ -71,7 +71,6 @@ const LoginForm = () => {
   }
 
   const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
-    console.log(credentialResponse);
     login_with_google({
       credentials: credentialResponse,
     });
