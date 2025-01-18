@@ -46,39 +46,40 @@ const loginAPI = async ({
   }
 };
 
-interface RefreshTokenResponse {
-  accessToken: string;
-}
-const refreshAccessTokenAPI = async ({
-  setIsAuthenticated,
-  setAccessToken,
-}: {
-  setIsAuthenticated: (i: boolean) => void;
-  setAccessToken: (value: string | null) => void;
-}): Promise<string> => {
+const refreshAccessTokenAPI = async () => {
   try {
-    const res = await axios.post<RefreshTokenResponse>(
+    const res = await axios.get(
       `${server_url}/user/refresh-token`,
-      {},
+
       { withCredentials: true }
     );
 
-    setAccessToken(res.data.accessToken);
-    setIsAuthenticated(true);
+    return res.data;
   } catch (error) {
     console.error("Error refreshing access token:", error);
 
     if (axios.isAxiosError(error)) {
-      setAccessToken(null);
-      setIsAuthenticated(false);
-      // Provide more meaningful error handling
-      throw new Error(
-        error.response?.data?.message || "Failed to refresh token"
-      );
+      throw Error(error.response?.data?.message || "Failed to refresh token");
     }
+  }
+};
+const validateAccessToken = async () => {
+  try {
+    const res = await axios.get(`${server_url}/user/validate-access-token`, {
+      withCredentials: true,
+    });
 
-    throw error;
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw Error(error.response?.data.success || "Failed to validate token");
+    }
   }
 };
 
-export { loginAPI, loginWithGoogleAPI, refreshAccessTokenAPI };
+export {
+  loginAPI,
+  loginWithGoogleAPI,
+  refreshAccessTokenAPI,
+  validateAccessToken,
+};

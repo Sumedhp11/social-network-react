@@ -24,11 +24,11 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import toast from "react-hot-toast";
-import { useToken } from "@/contexts/AuthContext";
+
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const { setAccessToken, setIsAuthenticated } = useToken();
+
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof loginValidator>>({
@@ -43,8 +43,6 @@ const LoginForm = () => {
     mutationFn: loginAPI,
     onSuccess: (data) => {
       toast.success(data?.message);
-      setAccessToken(data.data.access_token);
-      setIsAuthenticated(true);
       navigate("/");
     },
   });
@@ -56,11 +54,7 @@ const LoginForm = () => {
   } = useMutation({
     mutationFn: loginWithGoogleAPI,
     onSuccess: (data) => {
-      console.log(data);
-
       toast.success(data?.message);
-      setAccessToken(data.data.access_token);
-      setIsAuthenticated(true);
       navigate("/");
     },
     onError: (error) => {
