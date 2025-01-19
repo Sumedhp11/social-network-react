@@ -1,6 +1,6 @@
-import { server_url } from "@/constants";
+import { axiosIntance, server_url } from "@/constants";
 import { CredentialResponse } from "@react-oauth/google";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 const loginWithGoogleAPI = async ({
   credentials,
@@ -77,9 +77,22 @@ const validateAccessToken = async () => {
   }
 };
 
+const getSingleUserAPI = async () => {
+  try {
+    const url = `/user/get-user-details`;
+    const res = await axiosIntance.get(url);
+    return res?.data?.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      return error.response?.data;
+    }
+  }
+};
+
 export {
   loginAPI,
   loginWithGoogleAPI,
   refreshAccessTokenAPI,
   validateAccessToken,
+  getSingleUserAPI,
 };
