@@ -2,7 +2,7 @@ import logo from "@/assets/Logo.svg";
 import { ReactNode } from "react";
 const AuthLayout = ({ component }: { component: ReactNode }) => {
   console.log("Came to AuthLayout");
-  
+
   return (
     <div className="w-full sm:h-dvh md:h-screen grid grid-cols-12">
       <div className="hidden md:flex col-span-5 h-full justify-center items-center bg-white">
