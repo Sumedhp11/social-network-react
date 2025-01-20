@@ -1,30 +1,42 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
 import { LogOut } from "lucide-react";
+import { logoutAPI } from "@/APIs/authAPIs";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
+import Loader from "../ui/Loader";
 
 const UserProfilePopup = () => {
   const [toastId, setToastId] = useState<string>("");
   const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-//   const { mutate: logoutMutation, isPending } = useMutation({
-//     mutationFn: logoutAPI,
-//     onMutate: () => {
-//       const id = toast.loading("logging out");
-//       setToastId(id);
-//     },
-//     onSuccess: () => {
-//       router.replace("/login");
-//       toast.success("Logout Successfully", { id: toastId });
-//       setOpenAlertDialog(false);
-//     },
-//   });
-//   const handleLogout = () => {
-//     logoutMutation();
-//     signOut({
-//       redirect: true,
-//     });
-//   };
+  const { mutate: logoutMutation, isPending } = useMutation({
+    mutationFn: logoutAPI,
+    onMutate: () => {
+      const id = toast.loading("logging out");
+      setToastId(id);
+    },
+    onSuccess: () => {
+      navigate("/login", { replace: true });
+      toast.success("Logout Successfully", { id: toastId });
+      setOpenAlertDialog(false);
+    },
+  });
+  const handleLogout = () => {
+    logoutMutation();
+  };
   return (
     <AlertDialog open={openAlertDialog} onOpenChange={setOpenAlertDialog}>
       <AlertDialogTrigger asChild>
@@ -48,10 +60,10 @@ const UserProfilePopup = () => {
           </AlertDialogCancel>
           <AlertDialogAction
             className="bg-red-600 hover:bg-red-700"
-            // onClick={handleLogout}
-            // disabled={isPending}
+            onClick={handleLogout}
+            disabled={isPending}
           >
-            {/* {isPending ? (
+            {isPending ? (
               <div className="flex items-center gap-3">
                 <span className="text-white font-medium">Logging Out</span>
                 <span>
@@ -60,7 +72,7 @@ const UserProfilePopup = () => {
               </div>
             ) : (
               "Logout"
-            )} */}
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

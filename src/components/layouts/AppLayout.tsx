@@ -1,3 +1,4 @@
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import Header from "../common/Header";
 import Sidebar from "../common/Sidebar";
 
@@ -8,7 +9,9 @@ const AppLayout = ({
 }>) => {
   return (
     <div className="w-full h-dvh md:h-screen  flex flex-col bg-bgGray overflow-hidden">
-      <Header />
+      <NotificationProvider>
+        <Header />
+      </NotificationProvider>
 
       <div className="w-full flex-1 grid grid-cols-12">
         <aside className="hidden lg:block  lg:col-span-2 h-full">

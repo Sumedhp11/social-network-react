@@ -1,7 +1,13 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
-import { Search } from "lucide-react";
+import { Hourglass, Search, UserRoundPlus } from "lucide-react";
+import { getUsersAPI, sendFriendRequestAPI } from "@/APIs/authAPIs";
+import Loader from "../ui/Loader";
+import { Link } from "react-router";
+import { userInterface } from "@/types/types";
+import { Avatar, AvatarImage } from "../ui/avatar";
+import toast from "react-hot-toast";
 
 const SearchBox = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -18,28 +24,28 @@ const SearchBox = () => {
     };
   }, [searchTerm]);
 
-  //   const { data, isLoading, isError } = useQuery({
-  //     queryKey: ["search-term", debouncedSearchTerm],
-  //     queryFn: () => getUsersAPI({ searchTerm: debouncedSearchTerm }),
-  //     enabled: !!debouncedSearchTerm,
-  //   });
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["search-term", debouncedSearchTerm],
+    queryFn: () => getUsersAPI({ searchTerm: debouncedSearchTerm }),
+    enabled: !!debouncedSearchTerm,
+  });
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchTerm(e.target.value);
   }
 
-  //   const { mutate: sendFriendRequestMutation } = useMutation({
-  //     mutationFn: sendFriendRequestAPI,
-  //     onSuccess: () => {
-  //       toast.success("Friend Request Sent Successfully");
-  //       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-  //       queryClient.invalidateQueries({ queryKey: ["search-term"] });
-  //       setSearchTerm("");
-  //     },
-  //   });
-  //   function handleSendFriendRequest(friendId: number) {
-  //     sendFriendRequestMutation({ friendId });
-  //   }
+  const { mutate: sendFriendRequestMutation } = useMutation({
+    mutationFn: sendFriendRequestAPI,
+    onSuccess: () => {
+      toast.success("Friend Request Sent Successfully");
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["search-term"] });
+      setSearchTerm("");
+    },
+  });
+  function handleSendFriendRequest(friendId: number) {
+    sendFriendRequestMutation({ friendId });
+  }
   return (
     <div className="relative w-96">
       <Input
@@ -54,7 +60,7 @@ const SearchBox = () => {
         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700"
         size={20}
       />
-      {/* {isLoading && <Loader />}
+      {isLoading && <Loader />}
       {isError && <p>Error fetching users.</p>}
       {data && data.length > 0 && (
         <ul className="absolute bg-white border border-gray-300 w-full mt-1 rounded">
@@ -64,7 +70,7 @@ const SearchBox = () => {
               className="flex items-center justify-between px-2"
             >
               <Link
-                href={`/user/${user.id}`}
+                to={`/user/${user.id}`}
                 className="p-2 flex items-center gap-4 cursor-pointer"
                 onClick={() => setSearchTerm("")}
               >
@@ -102,7 +108,7 @@ const SearchBox = () => {
         <p className="absolute bg-white border border-gray-300 w-full mt-1 rounded">
           No users found.
         </p>
-      )} */}
+      )}
     </div>
   );
 };

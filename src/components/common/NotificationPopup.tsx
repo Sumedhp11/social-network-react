@@ -1,9 +1,13 @@
-"use client";
-
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Bell } from "lucide-react";
+import { Bell, Check, X } from "lucide-react";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { getAllNotifications } from "@/APIs/notificationAPIs";
+import { HandleFriendRequestAPI } from "@/APIs/authAPIs";
+import Loader from "../ui/Loader";
+import { Avatar, AvatarImage } from "../ui/avatar";
+import moment from "moment";
 
 interface Notification {
   sender: {
@@ -22,31 +26,31 @@ interface Notification {
 
 const NotificationPopup = () => {
   const [openPopup, setOpenPopup] = useState(false);
-  //   const { hasUnread, markAllAsRead } = useNotifications();
+  const { hasUnread, markAllAsRead } = useNotifications();
   const queryClient = useQueryClient();
-  //   const { isLoading, data: notifications } = useQuery({
-  //     queryKey: ["notifications"],
-  //     queryFn: getAllNotifications,
-  //   });
+  const { isLoading, data: notifications } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: getAllNotifications,
+  });
 
-  //   const { mutate: handleRequest } = useMutation({
-  //     mutationFn: HandleFriendRequestAPI,
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-  //     },
-  //   });
+  const { mutate: handleRequest } = useMutation({
+    mutationFn: HandleFriendRequestAPI,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
 
-  //   const handleFriendRequestClick = async (
-  //     friendshipId: number,
-  //     action: string
-  //   ) => {
-  //     if (action === "Accept") {
-  //       handleRequest({ friendShipId: friendshipId, action });
-  //     } else if (action === "Decline") {
-  //       handleRequest({ friendShipId: friendshipId, action });
-  //     }
-  //     setOpenPopup(false);
-  //   };
+  const handleFriendRequestClick = async (
+    friendshipId: number,
+    action: string
+  ) => {
+    if (action === "Accept") {
+      handleRequest({ friendShipId: friendshipId, action });
+    } else if (action === "Decline") {
+      handleRequest({ friendShipId: friendshipId, action });
+    }
+    setOpenPopup(false);
+  };
 
   return (
     <div className="relative">
@@ -56,15 +60,15 @@ const NotificationPopup = () => {
             <Bell
               size={25}
               className="text-white cursor-pointer"
-              //   onClick={markAllAsRead}
+              onClick={markAllAsRead}
             />
-            {/* {hasUnread && (
+            {hasUnread && (
               <div className="w-2 h-2 bg-green-800 rounded-full animate-ping absolute top-0 right-0"></div>
-            )} */}
+            )}
           </div>
         </PopoverTrigger>
         <PopoverContent className="w-[350px] mr-4 mt-4 p-4">
-          {/* {isLoading ? (
+          {isLoading ? (
             <Loader />
           ) : notifications && notifications.length > 0 ? (
             notifications.map((n: Notification, index: number) => (
@@ -123,7 +127,7 @@ const NotificationPopup = () => {
             ))
           ) : (
             <p className="text-center text-gray-500">No notifications</p>
-          )} */}
+          )}
         </PopoverContent>
       </Popover>
     </div>
