@@ -1,6 +1,7 @@
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import Header from "../common/Header";
 import Sidebar from "../common/Sidebar";
+import ChatDrawer from "../specific/chat/ChatDrawer";
 
 const AppLayout = ({
   component,
@@ -24,11 +25,9 @@ const AppLayout = ({
 
         <aside className="hidden lg:block lg:col-span-2 h-full border-l "></aside>
       </div>
-      {/* <div className="z-50 rounded-sm w-[30%] md:w-[18%] fixed bottom-1 right-4 flex justify-center items-center">
-        <CombinedProvider>
-          <ChatDrawer />
-        </CombinedProvider>
-      </div> */}
+      <div className="z-50 rounded-sm w-[30%] md:w-[18%] fixed bottom-1 right-4 flex justify-center items-center">
+        <ChatDrawer />
+      </div>
     </div>
   );
 };
