@@ -1,7 +1,20 @@
 import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
 import { socketEvents } from "@/constants";
+import { useSocket } from "@/contexts/SocketContext";
+import { useVideoChat } from "@/contexts/VideoChatContext";
+import { useSocketEvents } from "@/hooks";
 import { userInterface } from "@/types/types";
+import { X } from "lucide-react";
 import React, { useCallback, useState } from "react";
+import ChatList from "./ChatList";
 
 export interface newMessageAlertInterface {
   chatId: number;
@@ -10,14 +23,14 @@ export interface newMessageAlertInterface {
 
 const ChatDrawer = () => {
   const [username, setUsername] = useState("");
-  //   const socket = useSocket();
+  const socket = useSocket();
   const [selectedUser, setSelectedUser] = useState<userInterface | null>(null);
   const [newMessagesAlert, setNewMessagesAlert] = useState<
     newMessageAlertInterface[]
   >([]);
 
-  //   const { setOpenVideoChat, openVideoChat, setOpenDrawer, openDrawer } =
-  //     useVideoChat();
+  const { setOpenVideoChat, openVideoChat, setOpenDrawer, openDrawer } =
+    useVideoChat();
 
   const newMessagesListener = useCallback(
     (data: { chatId: number; message: string }) => {
@@ -44,12 +57,12 @@ const ChatDrawer = () => {
     [socketEvents.NEW_MESSAGE_ALERT]: newMessagesListener,
   };
 
-  //   useSocketEvents(socket, eventHandler);
+  useSocketEvents(socket, eventHandler);
 
   return (
     <>
       <Button
-        // onClick={() => setOpenDrawer(true)}
+        onClick={() => setOpenDrawer(true)}
         className="w-full bg-blue-100 text-[#189FF2] hover:bg-blue-200 flex items-center gap-4 justify-center"
       >
         <span className="text-base">Messages </span>
@@ -60,7 +73,7 @@ const ChatDrawer = () => {
         ) : null}
       </Button>
 
-      {/* {openDrawer ? (
+      {openDrawer ? (
         <Drawer
           open={openDrawer}
           onOpenChange={(value) => setOpenDrawer(value)}
@@ -135,7 +148,7 @@ const ChatDrawer = () => {
             </div>
           </DialogContent>
         </Dialog>
-      ) : null} */}
+      ) : null}
     </>
   );
 };

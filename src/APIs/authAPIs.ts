@@ -146,6 +146,21 @@ const getSingleUserAPI = async () => {
      }
    }
  };
+
+ const getFriendsAPI = async ({ username }: { username: string }) => {
+   try {
+     let url = `/user/friend-list`;
+     if (username) {
+       url += `?username=${username}`;
+     }
+     const res = await axiosIntance.get(url);
+     return res?.data?.data;
+   } catch (error) {
+     if (isAxiosError(error)) {
+       return error.response?.data;
+     }
+   }
+ };
  export {
    loginAPI,
    loginWithGoogleAPI,
@@ -156,4 +171,5 @@ const getSingleUserAPI = async () => {
    getUsersAPI,
    sendFriendRequestAPI,
    HandleFriendRequestAPI,
+   getFriendsAPI,
  };

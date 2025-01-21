@@ -33,3 +33,15 @@ export interface Comment {
 export interface Like {
   user_id: number;
 }
+export interface messageInterface {
+  attachment: string[];
+  chatId: number;
+  createdAt: Date;
+  message: string;
+  sender: { id: number; avatarUrl: string | null; username: string };
+  senderId: string;
+  updatedAt: Date;
+  __v: number;
+  _id: string | number;
+  seen_at: Date | null;
+}
