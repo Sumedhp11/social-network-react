@@ -1,7 +1,7 @@
 import { messageInterface } from "@/types/types";
 import { getAllMessages } from "@/APIs/messagesAPI";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 
 type EventHandlers = {
@@ -73,4 +73,46 @@ const useGetMessages = ({
   return { data, isFetching, hasNextPage, isFetchingNextPage, fetchNextPage };
 };
 
-export { useSocketEvents, useGetMessages };
+function useUserId(
+  key: string,
+  initialValue: number
+): [number, (value: number) => void] {
+  const [storedValue, setStoredValue] = useState<number>(() => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? parseInt(item, 10) : initialValue;
+    } catch (error) {
+      console.error(`Error reading localStorage key "${key}":`, error);
+      return initialValue;
+    }
+  });
+
+  const setValue = (value: number) => {
+    try {
+      setStoredValue(value);
+      localStorage.setItem(key, value.toString());
+    } catch (error) {
+      console.error(`Error setting localStorage key "${key}":`, error);
+    }
+  };
+
+  useEffect(() => {
+    try {
+      const item = localStorage.getItem(key);
+      if (item) {
+        setStoredValue(parseInt(item, 10));
+      }
+    } catch (error) {
+      console.error(
+        `Error syncing localStorage key "${key}" with state:`,
+        error
+      );
+    }
+  }, [key]);
+
+  return [storedValue, setValue];
+}
+
+export default useUserId;
+
+export { useSocketEvents, useGetMessages, useUserId };

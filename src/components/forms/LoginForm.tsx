@@ -1,4 +1,5 @@
 import { loginAPI, loginWithGoogleAPI } from "@/APIs/authAPIs";
+import { useUserId } from "@/hooks";
 import { loginValidator } from "@/validators/loginValidator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -10,6 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 import { Button } from "../ui/button";
@@ -23,12 +25,10 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import toast from "react-hot-toast";
-
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
+  const [, setUserId] = useUserId("userId", 0);
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof loginValidator>>({
@@ -43,6 +43,7 @@ const LoginForm = () => {
     mutationFn: loginAPI,
     onSuccess: (data) => {
       toast.success(data?.message);
+      setUserId(data.data.userId as number);
       navigate("/");
     },
   });
@@ -55,6 +56,7 @@ const LoginForm = () => {
     mutationFn: loginWithGoogleAPI,
     onSuccess: (data) => {
       toast.success(data?.message);
+      setUserId(data.data.userId as number);
       navigate("/");
     },
     onError: (error) => {

@@ -1,11 +1,4 @@
 import { Button } from "@/components/ui/button";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { socketEvents } from "@/constants";
 import { useSocket } from "@/contexts/SocketContext";
@@ -15,11 +8,23 @@ import { userInterface } from "@/types/types";
 import { X } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import ChatList from "./ChatList";
+import Chat from "./Chat";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import clsx from "clsx";
 
 export interface newMessageAlertInterface {
   chatId: number;
   message: string;
 }
+
+const DEFAULT_AVATAR_URL = "https://avatars.githubusercontent.com/u/124599?v=4";
 
 const ChatDrawer = () => {
   const [username, setUsername] = useState("");
@@ -34,7 +39,7 @@ const ChatDrawer = () => {
 
   const newMessagesListener = useCallback(
     (data: { chatId: number; message: string }) => {
-      if (selectedUser?.chat.id !== data.chatId) {
+      if (!selectedUser || selectedUser.chat.id !== data.chatId) {
         setNewMessagesAlert((prev) => {
           const existingMessage = prev.find(
             (alert) => alert.chatId === data.chatId
@@ -66,14 +71,14 @@ const ChatDrawer = () => {
         className="w-full bg-blue-100 text-[#189FF2] hover:bg-blue-200 flex items-center gap-4 justify-center"
       >
         <span className="text-base">Messages </span>
-        {newMessagesAlert.length > 0 ? (
+        {newMessagesAlert.length > 0 && (
           <span className="w-5 h-5 bg-red-500 text-white rounded-full flex justify-center items-center">
             {newMessagesAlert.length}
           </span>
-        ) : null}
+        )}
       </Button>
 
-      {openDrawer ? (
+      {openDrawer && (
         <Drawer
           open={openDrawer}
           onOpenChange={(value) => setOpenDrawer(value)}
@@ -92,11 +97,13 @@ const ChatDrawer = () => {
                 <>
                   <div className="w-full flex justify-center">
                     <Input
-                      className={`w-[97%] mt-2 text-black placeholder:text-white border border-gray-900 bg-gray-300 ${
-                        username && "bg-white"
-                      }`}
+                      className={clsx(
+                        "w-[97%] mt-2 text-black border border-gray-900",
+                        username ? "bg-white" : "bg-gray-300"
+                      )}
                       onChange={(e) => setUsername(e.target.value)}
                       value={username}
+                      placeholder="Search users..."
                     />
                   </div>
                   <div className="w-full h-full overflow-auto flex flex-col items-center py-4 px-1 bg-gray-50">
@@ -120,8 +127,9 @@ const ChatDrawer = () => {
             </div>
           </DrawerContent>
         </Drawer>
-      ) : null}
-      {openVideoChat ? (
+      )}
+
+      {openVideoChat && (
         <Dialog onOpenChange={setOpenVideoChat} open={openVideoChat}>
           <DialogContent className="w-[50%] h-[65%] bg-white border border-blue-600">
             <DialogTitle className="hidden"></DialogTitle>
@@ -129,11 +137,7 @@ const ChatDrawer = () => {
               <div className="flex gap-3 items-center px-4 row-span-1">
                 <Avatar className="w-12 h-12 ring-2 ring-white">
                   <AvatarImage
-                    src={
-                      selectedUser?.avatarUrl === null
-                        ? "https://avatars.githubusercontent.com/u/124599?v=4"
-                        : selectedUser?.avatarUrl
-                    }
+                    src={selectedUser?.avatarUrl || DEFAULT_AVATAR_URL}
                     alt="User Avatar"
                     className="object-contain"
                   />
@@ -142,13 +146,10 @@ const ChatDrawer = () => {
                   {selectedUser?.username}
                 </h2>
               </div>
-              <div className="row-span-7">
-                <VideoChatComponent />
-              </div>
             </div>
           </DialogContent>
         </Dialog>
-      ) : null}
+      )}
     </>
   );
 };
