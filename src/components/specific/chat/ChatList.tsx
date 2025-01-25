@@ -27,19 +27,20 @@ const ChatList = ({
     refetchOnMount: true,
   });
 
-  if (isLoading) return <Loader />;
-
   if (error) return <p>Error loading friends!</p>;
 
   return (
     <>
-      {friendsList && friendsList.length > 0 ? (
+      {isLoading ? (
+        <Loader className="text-black" />
+      ) : friendsList && friendsList.length > 0 ? (
         friendsList.map((i: userInterface) => (
           <div
             key={i.friendId}
             className="w-full flex items-center gap-3 cursor-pointer hover:bg-slate-300 p-2 rounded"
             onClick={() => setSelectedUser(i)}
           >
+            {/* Avatar Section */}
             <div className="w-[15%]">
               <Avatar className="w-12 h-12 ring-2 ring-white">
                 <AvatarImage
@@ -52,28 +53,31 @@ const ChatList = ({
                 />
               </Avatar>
             </div>
-            <div className="space-y-3">
+
+            {/* User Info Section */}
+            <div className="space-y-2">
               <p className="font-medium text-sm text-black">{i.username}</p>
-              {i.chat?.id ? (
-                <>
-                  <span className="font-semibold text-sm text-[#758694]">
-                    {i.chat.last_message || "No messages yet"}
-                  </span>
+              {i.chat?.id && (
+                <div>
                   {newMessagesAlert.some(
                     (item) => item.chatId === i.chat.id
-                  ) && (
+                  ) ? (
                     <span className="text-red-600 font-medium text-sm ml-2">
                       New Messages
                     </span>
+                  ) : (
+                    <span className="font-semibold text-sm text-[#758694]">
+                      {i.chat.last_message || "No messages yet"}
+                    </span>
                   )}
-                </>
-              ) : null}
+                </div>
+              )}
             </div>
           </div>
         ))
       ) : (
         <p className="text-center font-medium text-sm text-black">
-          You Don’t have Any Friends!
+          You Don’t Have Any Friends!
         </p>
       )}
     </>

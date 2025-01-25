@@ -1,15 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { socketEvents } from "@/constants";
-import { useSocket } from "@/contexts/SocketContext";
-import { useVideoChat } from "@/contexts/VideoChatContext";
-import { useSocketEvents } from "@/hooks";
-import { userInterface } from "@/types/types";
-import { X } from "lucide-react";
-import React, { useCallback, useState } from "react";
-import ChatList from "./ChatList";
-import Chat from "./Chat";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
   Drawer,
   DrawerClose,
@@ -17,46 +6,70 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import { socketEvents } from "@/constants";
+import { useSocket } from "@/contexts/SocketContext";
+import VideoChatProvider from "@/contexts/VideoChatContext";
+import { useSocketEvents } from "@/hooks";
+import { userInterface } from "@/types/types";
 import clsx from "clsx";
+import { X } from "lucide-react";
+import React, { useCallback, useState } from "react";
+import Chat from "./Chat";
+import ChatList from "./ChatList";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface newMessageAlertInterface {
   chatId: number;
   message: string;
+  unreadCount: number;
 }
-
-const DEFAULT_AVATAR_URL = "https://avatars.githubusercontent.com/u/124599?v=4";
 
 const ChatDrawer = () => {
   const [username, setUsername] = useState("");
   const socket = useSocket();
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<userInterface | null>(null);
   const [newMessagesAlert, setNewMessagesAlert] = useState<
     newMessageAlertInterface[]
   >([]);
-
-  const { setOpenVideoChat, openVideoChat, setOpenDrawer, openDrawer } =
-    useVideoChat();
+  const queryClient = useQueryClient();
 
   const newMessagesListener = useCallback(
     (data: { chatId: number; message: string }) => {
       if (!selectedUser || selectedUser.chat.id !== data.chatId) {
         setNewMessagesAlert((prev) => {
-          const existingMessage = prev.find(
+          const existingAlert = prev.find(
             (alert) => alert.chatId === data.chatId
           );
-          if (existingMessage) {
+          if (existingAlert) {
             return prev.map((alert) =>
               alert.chatId === data.chatId
-                ? { ...alert, message: data.message }
+                ? {
+                    ...alert,
+                    message: data.message,
+                    unreadCount: alert.unreadCount + 1,
+                  }
                 : alert
             );
           }
-          return [...prev, { chatId: data.chatId, message: data.message }];
+          return [
+            ...prev,
+            { chatId: data.chatId, message: data.message, unreadCount: 1 },
+          ];
         });
+        queryClient.invalidateQueries({ queryKey: ["friends"] });
       }
     },
-    [selectedUser]
+    [selectedUser, queryClient]
   );
+
+  const handleChatSelection = (user: userInterface) => {
+    setSelectedUser(user);
+    setNewMessagesAlert((prev) =>
+      prev.filter((alert) => alert.chatId !== user.chat?.id)
+    );
+  };
 
   const eventHandler = {
     [socketEvents.NEW_MESSAGE_ALERT]: newMessagesListener,
@@ -65,7 +78,7 @@ const ChatDrawer = () => {
   useSocketEvents(socket, eventHandler);
 
   return (
-    <>
+    <VideoChatProvider>
       <Button
         onClick={() => setOpenDrawer(true)}
         className="w-full bg-blue-100 text-[#189FF2] hover:bg-blue-200 flex items-center gap-4 justify-center"
@@ -73,7 +86,10 @@ const ChatDrawer = () => {
         <span className="text-base">Messages </span>
         {newMessagesAlert.length > 0 && (
           <span className="w-5 h-5 bg-red-500 text-white rounded-full flex justify-center items-center">
-            {newMessagesAlert.length}
+            {newMessagesAlert.reduce(
+              (total, alert) => total + alert.unreadCount,
+              0
+            )}
           </span>
         )}
       </Button>
@@ -109,7 +125,7 @@ const ChatDrawer = () => {
                   <div className="w-full h-full overflow-auto flex flex-col items-center py-4 px-1 bg-gray-50">
                     <div className="w-full relative flex flex-col items-center space-y-5">
                       <ChatList
-                        setSelectedUser={setSelectedUser}
+                        setSelectedUser={handleChatSelection}
                         username={username}
                         newMessagesAlert={newMessagesAlert}
                       />
@@ -118,6 +134,7 @@ const ChatDrawer = () => {
                 </>
               ) : (
                 <Chat
+                  socket={socket}
                   selectedUser={selectedUser}
                   setSelectedUser={setSelectedUser}
                   setOpenDrawer={setOpenDrawer}
@@ -128,29 +145,7 @@ const ChatDrawer = () => {
           </DrawerContent>
         </Drawer>
       )}
-
-      {openVideoChat && (
-        <Dialog onOpenChange={setOpenVideoChat} open={openVideoChat}>
-          <DialogContent className="w-[50%] h-[65%] bg-white border border-blue-600">
-            <DialogTitle className="hidden"></DialogTitle>
-            <div className="w-full h-full py-3 grid grid-rows-8 border border-red-500 space-y-4">
-              <div className="flex gap-3 items-center px-4 row-span-1">
-                <Avatar className="w-12 h-12 ring-2 ring-white">
-                  <AvatarImage
-                    src={selectedUser?.avatarUrl || DEFAULT_AVATAR_URL}
-                    alt="User Avatar"
-                    className="object-contain"
-                  />
-                </Avatar>
-                <h2 className="text-lg font-medium leading-none tracking-tight text-black">
-                  {selectedUser?.username}
-                </h2>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
-    </>
+    </VideoChatProvider>
   );
 };
 

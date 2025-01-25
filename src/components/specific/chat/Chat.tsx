@@ -1,5 +1,4 @@
 import { socketEvents } from "@/constants";
-import { useSocket } from "@/contexts/SocketContext";
 import useUserId, {
   MessagesPage,
   useGetMessages,
@@ -8,6 +7,7 @@ import useUserId, {
 import { messageInterface, userInterface } from "@/types/types";
 import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
+import { Socket } from "socket.io-client";
 import ChatHeader from "./ChatHeader";
 import Messages from "./Messages";
 import SendMessage from "./SendMessage";
@@ -17,6 +17,7 @@ interface ChatProps {
   setSelectedUser: (user: null) => void;
   setOpenDrawer: (i: boolean) => void;
   setNewMessagesAlert: (i: []) => void;
+  socket: Socket;
 }
 
 const Chat = ({
@@ -24,8 +25,8 @@ const Chat = ({
   setSelectedUser,
   setOpenDrawer,
   setNewMessagesAlert,
+  socket,
 }: ChatProps) => {
-  const socket = useSocket();
   const queryClient = useQueryClient();
   const [userId] = useUserId("userId", 0);
   const [iamTyping, setIamTyping] = useState(false);
@@ -93,15 +94,31 @@ const Chat = ({
         }
       );
 
-      if (Number(data.messageForRealTime.senderId) === Number(userId)) return;
-      if (selectedUser.chat.id) {
-        console.log(data.messageForRealTime, 96);
-
+      if (Number(data.messageForRealTime.senderId) !== Number(userId)) {
         socket.emit(socketEvents.MESSAGE_SEEN, {
           chatId: data.chatId,
           messageIds: [data.messageForRealTime?._id],
           seen_at: new Date(),
         });
+
+        queryClient.setQueryData<InfiniteData<MessagesPage>>(
+          ["messages", selectedUser.chat.id],
+          (oldData) => {
+            if (!oldData) return;
+
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                data: page.data.map((msg) =>
+                  msg._id === data.messageForRealTime._id
+                    ? { ...msg, seen_at: new Date() }
+                    : msg
+                ),
+              })),
+            };
+          }
+        );
       }
     },
     [selectedUser.chat.id, queryClient, socket, userId]
@@ -122,6 +139,7 @@ const Chat = ({
       ) {
         return;
       }
+
       queryClient.setQueryData<InfiniteData<MessagesPage>>(
         ["messages", selectedUser.chat.id],
         (oldData) => {
@@ -156,7 +174,9 @@ const Chat = ({
   const handleStopTyping = useCallback(
     (data: { chatId: number }) => {
       if (data.chatId === selectedUser.chat.id) {
-        setUserTyping(false);
+        setTimeout(() => {
+          setUserTyping(false);
+        }, 500);
       }
     },
     [selectedUser.chat.id]

@@ -42,7 +42,7 @@ const Messages: React.FC<MessagesProps> = ({
   }, [inView, fetchNextPage, isFetchingNextPage, hasNextPage]);
 
   return (
-    <div className="w-full h-full  flex flex-col py-3">
+    <div className="w-full h-full  flex flex-col py-2">
       {isFetching || isFetchingNextPage ? (
         <div className="flex justify-center items-center">
           <Loader />
@@ -72,7 +72,7 @@ const Messages: React.FC<MessagesProps> = ({
             );
           })}
       {userTyping ? (
-        <div className={`w-full flex flex-start pl-5`}>
+        <div className={`w-full flex flex-start pl-5 mt-4`}>
           <TypingLoader />
         </div>
       ) : null}

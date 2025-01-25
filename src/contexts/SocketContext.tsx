@@ -1,4 +1,4 @@
-import { server_url } from "@/constants";
+import { socket_url } from "@/constants";
 import { ReactNode, createContext, useContext, useEffect } from "react";
 import io, { Socket } from "socket.io-client";
 
@@ -16,10 +16,8 @@ const useSocket = () => {
 
 const SocketProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
-    console.log(socket);
-
     if (!socket) {
-      socket = io(`${server_url}/`, {
+      socket = io(`${socket_url}/`, {
         autoConnect: false,
         withCredentials: true,
       });

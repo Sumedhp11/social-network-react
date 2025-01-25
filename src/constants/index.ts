@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const server_url = import.meta.env.VITE_BACKEND_URL;
+const socket_url = import.meta.env.VITE_SOCKET_URL;
 const axiosIntance = axios.create({
   baseURL: server_url,
   withCredentials: true,
@@ -23,4 +24,4 @@ const axiosIntance = axios.create({
    INCOMING_CALL: "INCOMING_CALL",
    CALL_ENDED: "CALL_ENDED",
  };
-export { server_url, axiosIntance, socketEvents };
+export { server_url, axiosIntance, socketEvents, socket_url };
