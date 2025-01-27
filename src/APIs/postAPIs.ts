@@ -3,7 +3,7 @@ import { isAxiosError } from "axios";
 
 const addPostAPI = async (formdata: FormData) => {
   try {
-    const res = await axiosIntance.post(`/api/post/add-post`, formdata);
+    const res = await axiosIntance.post(`/post/add-post`, formdata);
     return res.data;
   } catch (error) {
     if (isAxiosError(error)) {
@@ -30,4 +30,17 @@ const getAllpostsAPI = async ({
     }
   }
 };
-export { addPostAPI, getAllpostsAPI };
+
+const getUserPostsAPI = async ({ userId }: { userId: number }) => {
+  try {
+    const res = await axiosIntance.get(`/user/get-user-posts/${userId}`);
+    console.log(res.data);
+
+    return res?.data?.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      return error.response?.data;
+    }
+  }
+};
+export { addPostAPI, getAllpostsAPI, getUserPostsAPI };

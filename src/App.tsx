@@ -7,6 +7,7 @@ const Register = lazy(() => import("@/components/pages/auth/Register"));
 const AuthLayout = lazy(() => import("@/components/layouts/AuthLayout"));
 const AppLayout = lazy(() => import("@/components/layouts/AppLayout"));
 const Home = lazy(() => import("@/components/pages/main/Home"));
+const UserProfile = lazy(() => import("@/components/pages/main/UserProfile"));
 const App = () => {
   return (
     <Router>
@@ -22,6 +23,10 @@ const App = () => {
               element={<AuthLayout component={<Register />} />}
             />
             <Route path="/" element={<AppLayout component={<Home />} />} />
+            <Route
+              path="/profile/:userId"
+              element={<AppLayout component={<UserProfile />} />}
+            />
           </Routes>
         </ProtectedRoute>
       </Suspense>

@@ -55,7 +55,7 @@ const Sidebar = () => {
 
           {/* Profile Link */}
           <Link
-            to="/profile"
+            to={`/profile/${userData.id}`}
             className="text-center font-semibold text-[#189FF2] transition-colors"
           >
             My Profile
