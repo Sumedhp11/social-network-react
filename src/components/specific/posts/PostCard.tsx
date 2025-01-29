@@ -44,24 +44,26 @@ const PostCard = ({ post }: { post: PostData }) => {
   //   }
 
   return (
-    <div className="w-full rounded-xl pt-3 bg-cardGray border-none h-fit my-7">
+    <div className="w-full rounded-xl pt-3 bg-cardGray border-none h-fit my-5">
       <Card className="w-full rounded-xl pt-3 bg-cardGray border-none h-fit">
         <CardContent className="w-full">
-          <div className="flex gap-3 items-center">
-            <Avatar className="w-12 h-12">
-              <AvatarImage
-                src={
-                  post.user.avatarUrl
-                    ? post.user.avatarUrl
-                    : "https://github.com/shadcn.png"
-                }
-                alt="User Avatar"
-              />
-            </Avatar>
-            <h1 className="text-base text-white font-normal">
-              {post.user.username}
-            </h1>
-          </div>
+          {post.user ? (
+            <div className="flex gap-3 items-center">
+              <Avatar className="w-12 h-12">
+                <AvatarImage
+                  src={
+                    post.user.avatarUrl
+                      ? post.user.avatarUrl
+                      : "https://github.com/shadcn.png"
+                  }
+                  alt="User Avatar"
+                />
+              </Avatar>
+              <h1 className="text-base text-white font-normal">
+                {post.user.username}
+              </h1>
+            </div>
+          ) : null}
 
           <div className="pl-14 flex flex-col space-y-5">
             <h2 className="text-sm font-normal text-gray-400">

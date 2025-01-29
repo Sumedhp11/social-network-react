@@ -70,7 +70,7 @@ const SearchBox = () => {
               className="flex items-center justify-between px-2"
             >
               <Link
-                to={`/user/${user.id}`}
+                to={`/profile/${user.id}`}
                 className="p-2 flex items-center gap-4 cursor-pointer"
                 onClick={() => setSearchTerm("")}
               >

@@ -1,21 +1,22 @@
-import { getUserPostsAPI } from "@/APIs/postAPIs";
-import Loader from "@/components/ui/Loader";
-import { useQuery } from "@tanstack/react-query";
+import UserCard from "@/components/specific/profile/UserCard";
+import UserProfilePosts from "@/components/specific/profile/UserProfilePosts";
 import { useParams } from "react-router";
 
 const UserProfile = () => {
-  const { userId } = useParams();
-  if (!userId) return;
-  const { data, isLoading } = useQuery({
-    queryKey: ["user-posts"],
-    queryFn: () => getUserPostsAPI({ userId: Number(userId) }),
-  });
-  console.log(data);
+  const { userId } = useParams<{ userId: string }>();
 
-  return isLoading ? (
-    <Loader />
-  ) : (
-    <div className="w-full h-full border border-white">UserProfile</div>
+  const parsedUserId = parseInt(userId!);
+  return (
+    <div className="w-full h-full">
+      {!parsedUserId ? (
+        <p>userId Not Provided</p>
+      ) : (
+        <>
+          <UserCard userId={parsedUserId} />
+          <UserProfilePosts userId={parsedUserId} />
+        </>
+      )}
+    </div>
   );
 };
 

@@ -9,7 +9,7 @@ import SideBarCardSkeleton from "../specific/SideBarCardSkeleton";
 const Sidebar = () => {
   const { data: userData, isLoading } = useQuery({
     queryKey: ["user-data"],
-    queryFn: getSingleUserAPI,
+    queryFn: () => getSingleUserAPI(),
   });
 
   return isLoading ? (

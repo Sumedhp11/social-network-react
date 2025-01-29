@@ -14,7 +14,7 @@ export interface PostData {
   user_id: number;
   content?: string;
   description?: string;
-  user: userInterface;
+  user?: userInterface;
   createdAt: Date;
   updatedAt: Date;
   comments: [Comment];

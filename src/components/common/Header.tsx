@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import NotificationPopup from "./NotificationPopup";
@@ -8,7 +9,9 @@ const Header = () => {
   return (
     <div className="h-14 flex items-center justify-between px-4 py-2">
       <div className="flex items-center">
-        <h1 className="text-xl font-semibold text-white">App Logo</h1>
+        <Link to={"/"}>
+          <h1 className="text-xl font-semibold text-white">App Logo</h1>
+        </Link>
       </div>
 
       <div className="ml-auto flex items-center gap-5">

@@ -3,10 +3,8 @@ import { Card, CardContent } from "../../ui/card";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Input } from "../../ui/input";
 import { Image as ImageIcon, Loader, Video } from "lucide-react";
-
 import { Button } from "../../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 import toast from "react-hot-toast";
 import { addPostAPI } from "@/APIs/postAPIs";
 import MediaViewer from "../../ui/MediaView";
