@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { socketEvents } from "@/constants";
 import { useSocket } from "@/contexts/SocketContext";
-import VideoChatProvider from "@/contexts/VideoChatContext";
+import VideoChatProvider, { useVideoChat } from "@/contexts/VideoChatContext";
 import { useSocketEvents } from "@/hooks";
 import { userInterface } from "@/types/types";
 import clsx from "clsx";
@@ -18,6 +18,9 @@ import React, { useCallback, useState } from "react";
 import Chat from "./Chat";
 import ChatList from "./ChatList";
 import { useQueryClient } from "@tanstack/react-query";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import VideoChatComponent from "../video chat/VideoChatComponent";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 export interface newMessageAlertInterface {
   chatId: number;
@@ -34,6 +37,9 @@ const ChatDrawer = () => {
     newMessageAlertInterface[]
   >([]);
   const queryClient = useQueryClient();
+
+  const { setOpenVideoChat, openVideoChat } = useVideoChat();
+  console.log(openVideoChat);
 
   const newMessagesListener = useCallback(
     (data: { chatId: number; message: string }) => {
@@ -145,9 +151,36 @@ const ChatDrawer = () => {
           </DrawerContent>
         </Drawer>
       )}
+      {openVideoChat ? (
+        <Dialog onOpenChange={setOpenVideoChat} open={openVideoChat}>
+          <DialogContent className="w-[50%] h-[65%] bg-white border border-blue-600">
+            <DialogTitle className="hidden"></DialogTitle>
+            <div className="w-full h-full py-3 grid grid-rows-8 border border-red-500 space-y-4">
+              <div className="flex gap-3 items-center px-4 row-span-1">
+                <Avatar className="w-12 h-12 ring-2 ring-white">
+                  <AvatarImage
+                    src={
+                      selectedUser?.avatarUrl === null
+                        ? "https://avatars.githubusercontent.com/u/124599?v=4"
+                        : selectedUser?.avatarUrl
+                    }
+                    alt="User Avatar"
+                    className="object-contain"
+                  />
+                </Avatar>
+                <h2 className="text-lg font-medium leading-none tracking-tight text-black">
+                  {selectedUser?.username}
+                </h2>
+              </div>
+              <div className="row-span-7">
+                <VideoChatComponent />
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      ) : null}
     </VideoChatProvider>
   );
 };
 
 export default React.memo(ChatDrawer);
-  

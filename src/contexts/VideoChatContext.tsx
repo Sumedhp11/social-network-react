@@ -21,8 +21,6 @@ interface VideoChatContextProps {
   remoteStream: MediaStream | null;
   openVideoChat: boolean;
   setOpenVideoChat: (i: boolean) => void;
-  openDrawer: boolean;
-  setOpenDrawer: (i: boolean) => void;
 }
 
 const VideoChatContext = createContext<VideoChatContextProps | null>(null);
@@ -41,7 +39,6 @@ export const VideoChatProvider: React.FC<{ children: React.ReactNode }> = ({
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const [openVideoChat, setOpenVideoChat] = useState(false);
   const [user, setUser] = useState<number | null>(null);
-  const [openDrawer, setOpenDrawer] = useState(false);
   const createMockStream = (): MediaStream => {
     const mockStream = new MediaStream();
 
@@ -130,6 +127,7 @@ export const VideoChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const callUser = async (userId: number) => {
     setUser(userId);
+
     if (!socket) return;
 
     setIsInCall(true);
@@ -284,8 +282,6 @@ export const VideoChatProvider: React.FC<{ children: React.ReactNode }> = ({
         remoteStream,
         setOpenVideoChat,
         openVideoChat,
-        openDrawer,
-        setOpenDrawer,
       }}
     >
       {children}

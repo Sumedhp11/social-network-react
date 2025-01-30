@@ -165,6 +165,19 @@ const getFriendsAPI = async ({ username }: { username: string }) => {
     }
   }
 };
+
+const getRecommendedUsersAPI = async () => {
+  try {
+    const res = await axiosIntance.get("/friends/get-recommended-friends");
+    return res.data?.data;
+  } catch (error) {
+    console.log(error);
+    if (isAxiosError(error)) {
+      return error.response?.data;
+    }
+  }
+};
+
 export {
   loginAPI,
   loginWithGoogleAPI,
@@ -176,4 +189,5 @@ export {
   sendFriendRequestAPI,
   HandleFriendRequestAPI,
   getFriendsAPI,
+  getRecommendedUsersAPI,
 };

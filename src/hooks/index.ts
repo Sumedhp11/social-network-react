@@ -30,7 +30,6 @@ const useSocketEvents = (socket: Socket, handlers: EventHandlers) => {
   useEffect(() => {
     const currentHandler = savedHandlers.current;
     Object.entries(currentHandler).forEach(([event, handler]) => {
-      console.log(event, "Listening");
       socket.on(event, handler);
     });
     return () => {
@@ -50,8 +49,6 @@ const useGetMessages = ({
   fetchNextPage: () => void;
   hasNextPage: boolean;
 } => {
-  console.log(chatId, 59);
-
   const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteQuery<MessagesPage>({
       queryKey: ["messages", chatId],
