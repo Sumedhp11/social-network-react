@@ -6,7 +6,7 @@ import Loader from "../ui/Loader";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
-  const { mutate, error, isPending } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: validateAccessToken,
     retry: false,
     onError: () => navigate("/login", { replace: true }),
@@ -17,7 +17,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (isPending) {
     return <Loader />;
   }
-  console.log(error);
 
   return <>{children}</>;
 };

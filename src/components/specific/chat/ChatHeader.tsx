@@ -27,7 +27,7 @@ const ChatHeader = ({
           onClick={() => setSelectedUser(null)}
         />
         <Link
-          to={`/user/${selectedUser.friendId}`}
+          to={`/profile/${selectedUser.friendId}`}
           className="flex items-center gap-3"
           onClick={() => setOpenDrawer(false)}
         >

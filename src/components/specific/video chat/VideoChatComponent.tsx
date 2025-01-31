@@ -1,17 +1,9 @@
-import { useEffect } from "react";
-import { useVideoChat } from "@/contexts/VideoChatContext";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { useVideoChat } from "@/contexts/VideoChatContext";
+import ReactPlayer from "react-player";
 
 const VideoChatComponent = () => {
-  const { isInCall, localStream, remoteStream, declineCall } = useVideoChat();
-
-  useEffect(() => {
-    return () => {
-      if (localStream) {
-        localStream.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, [localStream]);
+  const { isInCall, localStream, remoteStream, endCall } = useVideoChat();
 
   return (
     <div className="w-full h-full p-4 flex flex-col items-center bg-gray-100 rounded-lg shadow-lg">
@@ -19,15 +11,12 @@ const VideoChatComponent = () => {
         {/* Local Video */}
         <div className="w-1/2 h-full border border-gray-300 rounded-lg overflow-hidden relative shadow-md">
           {localStream ? (
-            <video
-              ref={(ref) => {
-                if (ref && localStream) {
-                  ref.srcObject = localStream;
-                }
-              }}
-              autoPlay
+            <ReactPlayer
+              url={localStream}
+              playing
               muted
-              className="w-full h-full object-cover"
+              width="100%"
+              height="100%"
             />
           ) : (
             <div className="flex items-center justify-center w-full h-full text-center text-gray-500">
@@ -42,14 +31,11 @@ const VideoChatComponent = () => {
         {/* Remote Video */}
         <div className="w-1/2 h-full border border-gray-300 rounded-lg overflow-hidden relative shadow-md">
           {remoteStream ? (
-            <video
-              ref={(ref) => {
-                if (ref && remoteStream) {
-                  ref.srcObject = remoteStream;
-                }
-              }}
-              autoPlay
-              className="w-full h-full object-cover"
+            <ReactPlayer
+              url={remoteStream}
+              playing
+              width="100%"
+              height="100%"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
@@ -71,7 +57,7 @@ const VideoChatComponent = () => {
       {/* Hang Up Button */}
       {isInCall && (
         <button
-          onClick={declineCall}
+          onClick={endCall}
           className="px-4 py-2 mt-4 text-white bg-red-600 rounded-lg shadow hover:bg-red-700 transition duration-200"
         >
           Hang Up

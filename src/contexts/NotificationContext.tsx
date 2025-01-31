@@ -39,9 +39,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
           withCredentials: true,
         });
 
-        eventSource.onopen = () => {
-          console.log("Notification server connection established");
-        };
 
         eventSource.onmessage = (event) => {
           try {
@@ -82,7 +79,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
 
     return () => {
       if (eventSource) {
-        console.log("Closing EventSource connection");
         eventSource.close();
       }
       if (retryTimeout) {

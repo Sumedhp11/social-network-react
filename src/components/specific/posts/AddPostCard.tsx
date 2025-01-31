@@ -51,7 +51,6 @@ const AddPostCard = () => {
     data.append("content", postImage);
     AddPost(data);
   };
-  console.log(postImage);
 
   return (
     <Card className="w-full rounded-xl pt-3 bg-cardGray border-none h-fit">

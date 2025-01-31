@@ -1,4 +1,6 @@
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerClose,
@@ -9,18 +11,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { socketEvents } from "@/constants";
 import { useSocket } from "@/contexts/SocketContext";
-import VideoChatProvider, { useVideoChat } from "@/contexts/VideoChatContext";
+import { useVideoChat } from "@/contexts/VideoChatContext";
 import { useSocketEvents } from "@/hooks";
 import { userInterface } from "@/types/types";
+import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { X } from "lucide-react";
 import React, { useCallback, useState } from "react";
+import VideoChatComponent from "../video chat/VideoChatComponent";
 import Chat from "./Chat";
 import ChatList from "./ChatList";
-import { useQueryClient } from "@tanstack/react-query";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import VideoChatComponent from "../video chat/VideoChatComponent";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 export interface newMessageAlertInterface {
   chatId: number;
@@ -31,15 +31,20 @@ export interface newMessageAlertInterface {
 const ChatDrawer = () => {
   const [username, setUsername] = useState("");
   const socket = useSocket();
-  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+
   const [selectedUser, setSelectedUser] = useState<userInterface | null>(null);
   const [newMessagesAlert, setNewMessagesAlert] = useState<
     newMessageAlertInterface[]
   >([]);
   const queryClient = useQueryClient();
 
-  const { setOpenVideoChat, openVideoChat } = useVideoChat();
-  console.log(openVideoChat);
+  const {
+    openDialog,
+    setOpenDialog,
+    openDrawer,
+    setOpenDrawer,
+    recipentUserDetails,
+  } = useVideoChat();
 
   const newMessagesListener = useCallback(
     (data: { chatId: number; message: string }) => {
@@ -84,7 +89,7 @@ const ChatDrawer = () => {
   useSocketEvents(socket, eventHandler);
 
   return (
-    <VideoChatProvider>
+    <>
       <Button
         onClick={() => setOpenDrawer(true)}
         className="w-full bg-blue-100 text-[#189FF2] hover:bg-blue-200 flex items-center gap-4 justify-center"
@@ -151,8 +156,8 @@ const ChatDrawer = () => {
           </DrawerContent>
         </Drawer>
       )}
-      {openVideoChat ? (
-        <Dialog onOpenChange={setOpenVideoChat} open={openVideoChat}>
+      {openDialog ? (
+        <Dialog onOpenChange={setOpenDialog} open={openDialog}>
           <DialogContent className="w-[50%] h-[65%] bg-white border border-blue-600">
             <DialogTitle className="hidden"></DialogTitle>
             <div className="w-full h-full py-3 grid grid-rows-8 border border-red-500 space-y-4">
@@ -160,16 +165,20 @@ const ChatDrawer = () => {
                 <Avatar className="w-12 h-12 ring-2 ring-white">
                   <AvatarImage
                     src={
-                      selectedUser?.avatarUrl === null
-                        ? "https://avatars.githubusercontent.com/u/124599?v=4"
-                        : selectedUser?.avatarUrl
+                      selectedUser?.avatarUrl
+                        ? selectedUser?.avatarUrl
+                        : recipentUserDetails
+                        ? recipentUserDetails.avatarUrl
+                        : "https://avatars.githubusercontent.com/u/124599?v=4"
                     }
                     alt="User Avatar"
                     className="object-contain"
                   />
                 </Avatar>
                 <h2 className="text-lg font-medium leading-none tracking-tight text-black">
-                  {selectedUser?.username}
+                  {selectedUser?.username
+                    ? selectedUser.username
+                    : recipentUserDetails?.username}
                 </h2>
               </div>
               <div className="row-span-7">
@@ -179,7 +188,7 @@ const ChatDrawer = () => {
           </DialogContent>
         </Dialog>
       ) : null}
-    </VideoChatProvider>
+    </>
   );
 };
 
