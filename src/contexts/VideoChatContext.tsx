@@ -26,6 +26,7 @@ interface VideoChatContextProps {
 
 const VideoChatContext = createContext<VideoChatContextProps | null>(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useVideoChat = () => useContext(VideoChatContext)!;
 
 export const VideoChatProvider: React.FC<{ children: React.ReactNode }> = ({
