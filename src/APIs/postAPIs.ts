@@ -43,4 +43,47 @@ const getUserPostsAPI = async ({ userId }: { userId: number }) => {
     }
   }
 };
-export { addPostAPI, getAllpostsAPI, getUserPostsAPI };
+
+
+const addCommentAPI = async ({
+  post_id,
+  comment,
+}: {
+  post_id: number;
+  comment: string;
+}) => {
+  try {
+    const res = await axiosIntance.post(`/post/add-comment`, {
+      postId: post_id,
+      comment,
+    });
+    return res?.data;
+  } catch (error) {
+    console.log(error);
+    if (isAxiosError(error)) {
+      throw error.response?.data;
+    }
+  }
+};
+
+const likePostAPI = async (post_id: number) => {
+  try {
+    const res = await axiosIntance.post(`/post/like-post`, {
+      post_id,
+    });
+    return res?.data;
+  } catch (error) {
+    console.log(error);
+    if (isAxiosError(error)) {
+      throw error.response?.data;
+    }
+  }
+};
+
+export {
+  addPostAPI,
+  getAllpostsAPI,
+  getUserPostsAPI,
+  addCommentAPI,
+  likePostAPI,
+};

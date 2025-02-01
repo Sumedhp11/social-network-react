@@ -1,3 +1,5 @@
+import { addCommentAPI, likePostAPI } from "@/APIs/postAPIs";
+import Loader from "@/components/ui/Loader";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,8 +8,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { PostData } from "@/types/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Heart, MessageSquare } from "lucide-react";
 import moment from "moment";
 import { useState } from "react";
@@ -15,33 +20,33 @@ import { useState } from "react";
 const PostCard = ({ post }: { post: PostData }) => {
   const [comment, setComment] = useState<string>("");
 
-  //   const queryClient = useQueryClient();
-  //   const { mutate: likeMutation, isPending } = useMutation({
-  //     mutationFn: likePostAPI,
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({
-  //         queryKey: ["posts"],
-  //       });
-  //     },
-  //   });
+  const queryClient = useQueryClient();
+  const { mutate: likeMutation, isPending } = useMutation({
+    mutationFn: likePostAPI,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["posts"],
+      });
+    },
+  });
 
-  //   const { mutate: commentMutation, isPending: isPendingComment } = useMutation({
-  //     mutationFn: addCommentAPI,
-  //     onSuccess: () => {
-  //       setComment("");
-  //       queryClient.invalidateQueries({
-  //         queryKey: ["posts"],
-  //       });
-  //     },
-  //   });
+  const { mutate: commentMutation, isPending: isPendingComment } = useMutation({
+    mutationFn: addCommentAPI,
+    onSuccess: () => {
+      setComment("");
+      queryClient.invalidateQueries({
+        queryKey: ["posts"],
+      });
+    },
+  });
 
-  //   function Likehandler() {
-  //     likeMutation(post.id);
-  //   }
+  function Likehandler() {
+    likeMutation(post.id);
+  }
 
-  //   function CommentHandler() {
-  //     commentMutation({ post_id: post.id, comment });
-  //   }
+  function CommentHandler() {
+    commentMutation({ post_id: post.id, comment });
+  }
 
   return (
     <div className="w-full rounded-xl pt-3 bg-cardGray border-none h-fit my-5">
@@ -88,19 +93,19 @@ const PostCard = ({ post }: { post: PostData }) => {
               {/* Like button */}
               <div
                 className="w-28 rounded-xl bg-[#2B3A45] flex items-center gap-2 justify-center cursor-pointer py-3"
-                // onClick={Likehandler}
+                onClick={Likehandler}
               >
                 <Heart
                   size={20}
                   className="text-white hover:scale-125 transform ease-out duration-300"
                 />
-                {/* {isPending ? (
-                  <Loader2 className="text-white animate-spin" size={20} />
+                {isPending ? (
+                  <Loader />
                 ) : (
                   <p className="text-sm font-medium text-white">
                     ({post.likes.length})
                   </p>
-                )} */}
+                )}
               </div>
 
               {/* Comment Popover */}
@@ -128,15 +133,15 @@ const PostCard = ({ post }: { post: PostData }) => {
                     />
                     <Button
                       className="px-4 h-10"
-                      // onClick={CommentHandler}
-                      // disabled={isPendingComment}
+                      onClick={CommentHandler}
+                      disabled={isPendingComment}
                     >
                       Comment
                     </Button>
                   </div>
 
                   {/* Comments section */}
-                  {/* {post.comments.length ? (
+                  {post.comments.length ? (
                     <ScrollArea className="h-60 rounded-md border">
                       {post.comments.map((comment) => (
                         <div className="w-full px-3 py-2" key={comment.id}>
@@ -173,7 +178,7 @@ const PostCard = ({ post }: { post: PostData }) => {
                     <p className="text-center text-gray-500">
                       No Comments Found
                     </p>
-                  )} */}
+                  )}
                 </PopoverContent>
               </Popover>
             </div>
