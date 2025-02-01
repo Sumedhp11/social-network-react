@@ -20,7 +20,7 @@ const FriendList = ({ userId }: { userId?: number | undefined }) => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="w-full flex justify-center mt-5 max-h-48">
+    <div className="w-full flex justify-center mt-5">
       <Card className="bg-cardGray w-[95%] rounded-xl shadow-md border-none">
         <CardContent className="w-full h-full flex flex-col py-6 space-y-4">
           <h2 className="text-white font-medium">
