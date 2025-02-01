@@ -16,6 +16,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Heart, MessageSquare } from "lucide-react";
 import moment from "moment";
 import { useState } from "react";
+import { Link } from "react-router";
 
 const PostCard = ({ post }: { post: PostData }) => {
   const [comment, setComment] = useState<string>("");
@@ -53,21 +54,23 @@ const PostCard = ({ post }: { post: PostData }) => {
       <Card className="w-full rounded-xl pt-3 bg-cardGray border-none h-fit">
         <CardContent className="w-full">
           {post.user ? (
-            <div className="flex gap-3 items-center">
-              <Avatar className="w-12 h-12">
-                <AvatarImage
-                  src={
-                    post.user.avatarUrl
-                      ? post.user.avatarUrl
-                      : "https://github.com/shadcn.png"
-                  }
-                  alt="User Avatar"
-                />
-              </Avatar>
-              <h1 className="text-base text-white font-normal">
-                {post.user.username}
-              </h1>
-            </div>
+            <Link to={`/profile/${post.user.id}`}>
+              <div className="flex gap-3 items-center">
+                <Avatar className="w-12 h-12">
+                  <AvatarImage
+                    src={
+                      post.user.avatarUrl
+                        ? post.user.avatarUrl
+                        : "https://github.com/shadcn.png"
+                    }
+                    alt="User Avatar"
+                  />
+                </Avatar>
+                <h1 className="text-base text-white font-normal">
+                  {post.user.username}
+                </h1>
+              </div>
+            </Link>
           ) : null}
 
           <div className="pl-14 flex flex-col space-y-5">

@@ -151,12 +151,16 @@ const HandleFriendRequestAPI = async ({
   }
 };
 
-const getFriendsAPI = async ({ username }: { username: string }) => {
+const getFriendsAPI = async (username?: string, userId?: number) => {
   try {
     let url = `/user/friend-list`;
     if (username) {
       url += `?username=${username}`;
     }
+    if (userId) {
+      url += `?userId=${userId}`;
+    }
+
     const res = await axiosIntance.get(url);
     return res?.data?.data;
   } catch (error) {

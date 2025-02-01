@@ -8,6 +8,7 @@ const UserCard = ({ userId }: { userId: number }) => {
     queryKey: ["user-data", userId],
     queryFn: () => getSingleUserAPI(userId),
   });
+  
   return isLoading ? (
     <Loader />
   ) : (

@@ -20,7 +20,7 @@ const ChatList = ({
     error,
   } = useQuery({
     queryKey: ["friends", username],
-    queryFn: () => getFriendsAPI({ username }),
+    queryFn: () => getFriendsAPI(username),
     staleTime: 0,
     gcTime: 0,
     initialData: [],

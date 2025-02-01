@@ -7,7 +7,7 @@ import NoDataFound from "@/components/common/NoDataFound";
 
 const UserProfilePosts = ({ userId }: { userId: number }) => {
   const { data, isLoading } = useQuery({
-    queryKey: ["user-posts"],
+    queryKey: ["user-posts", userId],
     queryFn: () => getUserPostsAPI({ userId: Number(userId) }),
     enabled: !!userId,
   });

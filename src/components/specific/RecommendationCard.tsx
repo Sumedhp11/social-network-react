@@ -39,7 +39,7 @@ const RecommendationCard = () => {
   if (isLoading) return <Loader />;
 
   return (
-    <div className="w-full flex justify-center max-h-48">
+    <div className="w-full flex justify-center max-h-48 mt-5">
       <Card className="bg-cardGray w-[95%] rounded-xl shadow-md border-none">
         <CardContent className="w-full h-full flex flex-col py-6 space-y-4">
           <p className="text-white font-medium">
