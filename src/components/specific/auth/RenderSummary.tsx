@@ -1,11 +1,29 @@
+import { registerAPI } from "@/APIs/authAPIs";
 import { formdata } from "@/components/forms/RegisterForm";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 const RenderSummary = ({ formData }: { formData: formdata }) => {
+  const navigate = useNavigate();
   const avatarSrc = formData.avatar
     ? URL.createObjectURL(formData.avatar)
     : undefined;
+
+  const { mutate: Register, isPending } = useMutation({
+    mutationFn: registerAPI,
+    onSuccess: (data) => {
+      toast.success(data.message, {
+        position: "bottom-center",
+      });
+      navigate("/");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   const handleRegister = () => {
     const form = new FormData();
@@ -25,6 +43,7 @@ const RenderSummary = ({ formData }: { formData: formdata }) => {
     if (formData.bio) {
       form.append("bio", formData.bio);
     }
+    Register(form);
   };
   return (
     <div className="space-y-4 flex flex-col text-white">
@@ -55,6 +74,7 @@ const RenderSummary = ({ formData }: { formData: formdata }) => {
       <Button
         className="w-full bg-[#189FF2] hover:bg-blue-600"
         onClick={handleRegister}
+        disabled={isPending}
       >
         Register
       </Button>
