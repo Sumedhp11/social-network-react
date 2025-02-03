@@ -192,8 +192,8 @@ const Chat = ({
   useSocketEvents(socket, eventHandler);
 
   return (
-    <div className="w-full h-full grid grid-rows-12">
-      <div className="row-span-1">
+    <div className="w-full h-full flex flex-col">
+      <div className="h-[12.1%]">
         <ChatHeader
           selectedUser={selectedUser}
           setSelectedUser={setSelectedUser}
@@ -201,7 +201,7 @@ const Chat = ({
           socket={socket}
         />
       </div>
-      <div className="row-span-9 overflow-auto">
+      <div className="h-[70%] overflow-hidden overflow-y-auto">
         <Messages
           messages={data?.pages.flatMap((page) => page.data) || []}
           isFetching={isFetching}
@@ -213,7 +213,7 @@ const Chat = ({
           hasNextPage={hasNextPage}
         />
       </div>
-      <div className="row-span-2">
+      <div className="">
         <SendMessage
           userId={userId}
           socket={socket}

@@ -42,7 +42,7 @@ const Messages: React.FC<MessagesProps> = ({
   }, [inView, fetchNextPage, isFetchingNextPage, hasNextPage]);
 
   return (
-    <div className="w-full h-full  flex flex-col py-2">
+    <div className="w-full h-full flex flex-col py-2">
       {isFetching || isFetchingNextPage ? (
         <div className="flex justify-center items-center">
           <Loader />

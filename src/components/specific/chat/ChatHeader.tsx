@@ -19,7 +19,7 @@ const ChatHeader = ({
   const { callUser } = useVideoChat();
 
   return (
-    <div className="w-full flex justify-between items-center py-2 px-1 bg-[#189FF2]">
+    <div className="w-full h-full flex justify-between items-center py-2 px-1 bg-[#189FF2]">
       <div className="gap-3 flex items-center">
         <ArrowLeft
           size={28}
