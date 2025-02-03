@@ -33,28 +33,25 @@ const PostCardsList = () => {
     }
   }, [inView, fetchNextPage, isFetchingNextPage]);
 
+  
   return isLoading ? (
-    <Loader />
+    <Loader className="text-white" />
   ) : (
-    <div
-      className="w-full mt-6  overflow-y-auto"
-      style={{
-        scrollbarWidth: "thin",
-        scrollbarColor: "#888 #333",
-      }}
-    >
-      {postData?.pages?.flatMap((page, index) =>
-        page?.posts?.length > 0 ? (
-          page?.posts?.map((post: PostData) => (
-            <PostCard post={post} key={post?.id} />
-          ))
-        ) : (
-          <NoDataFound text={"Sorry, no posts found 😥"} key={index} />
-        )
-      )}
-      {isFetchingNextPage && <Loader />}
+    <div className="w-full h-full">
+      <div className="space-y-4 pb-4">
+        {postData?.pages?.flatMap((page, index) =>
+          page?.posts?.length > 0 ? (
+            page?.posts?.map((post: PostData) => (
+              <PostCard post={post} key={post?.id} />
+            ))
+          ) : (
+            <NoDataFound text={"Sorry, no posts found 😥"} key={index} />
+          )
+        )}
+      </div>
 
-      <div ref={ref} />
+      {isFetchingNextPage && <Loader />}
+      <div ref={ref} className="h-4" />
     </div>
   );
 };

@@ -16,12 +16,16 @@ const UserProfilePosts = ({ userId }: { userId: number }) => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="w-full px-1 border-t border-white">
-      {data.length > 0 ? (
+    <div className="w-full p-4 space-y-4 border-t">
+      {data?.length > 0 ? (
         data.map((post: PostData) => <PostCard post={post} key={post.id} />)
       ) : (
-        <NoDataFound text="No Posts Yet" />
+        <div className="h-full flex items-center justify-center">
+          <NoDataFound text="No Posts Yet" />
+        </div>
       )}
+
+      <div className="pb-4" />
     </div>
   );
 };

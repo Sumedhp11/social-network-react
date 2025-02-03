@@ -1,5 +1,6 @@
 import { addCommentAPI, likePostAPI } from "@/APIs/postAPIs";
 import Loader from "@/components/ui/Loader";
+import MediaViewer from "@/components/ui/MediaView";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -81,16 +82,7 @@ const PostCard = ({ post }: { post: PostData }) => {
               {post.description}
             </p>
 
-            {post.content && (
-              <img
-                src={post.content}
-                alt="post-image"
-                className="h-56 w-full object-contain rounded-xl border"
-                width={400}
-                height={900}
-                loading="lazy"
-              />
-            )}
+            {post?.content && <MediaViewer postImage={post?.content} />}
 
             <div className="w-full flex items-center gap-3">
               {/* Like button */}

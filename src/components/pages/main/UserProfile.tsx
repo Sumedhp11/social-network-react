@@ -7,13 +7,24 @@ const UserProfile = () => {
 
   const parsedUserId = parseInt(userId!);
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-[90vh] flex flex-col">
       {!parsedUserId ? (
-        <p>userId Not Provided</p>
+        <p className="text-red-500 p-4">User ID Not Provided</p>
       ) : (
         <>
-          <UserCard userId={parsedUserId} />
-          <UserProfilePosts userId={parsedUserId} />
+          <div className="flex-none">
+            <UserCard userId={parsedUserId} />
+          </div>
+
+          <div
+            className="flex-1 overflow-y-auto"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "#888 #333",
+            }}
+          >
+            <UserProfilePosts userId={parsedUserId} />
+          </div>
         </>
       )}
     </div>

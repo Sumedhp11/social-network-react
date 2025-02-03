@@ -35,9 +35,7 @@ const AppLayout = ({
                   <FriendList userId={parseInt(userId!)} />
                 )}
               </aside>
-              <main className="col-span-12 lg:col-span-7 h-full p-4 overflow-y-hidden">
-                {component}
-              </main>
+              <main className="col-span-12 lg:col-span-7">{component}</main>
 
               <aside className="hidden lg:block lg:col-span-3 h-full">
                 <RecommendationCard />
