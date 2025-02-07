@@ -11,9 +11,8 @@ setupAxiosInterceptor();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      
-        <App />
-      
+      <App />
+
       <Toaster position="top-right" />
     </QueryClientProvider>
   </StrictMode>

@@ -45,7 +45,17 @@ const loginAPI = async ({
     throw error;
   }
 };
-
+const registerAPI = async (formData: FormData) => {
+  try {
+    const res = await axios.post(`${server_url}/user/register`, formData);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    if (isAxiosError(error)) {
+      throw error.response?.data;
+    }
+  }
+};
 const refreshAccessTokenAPI = async () => {
   try {
     const res = await axios.get(
@@ -194,4 +204,5 @@ export {
   HandleFriendRequestAPI,
   getFriendsAPI,
   getRecommendedUsersAPI,
+  registerAPI,
 };
