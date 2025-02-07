@@ -1,11 +1,17 @@
+import { getSingleUserAPI } from "@/APIs/authAPIs";
 import AddPostCard from "@/components/specific/posts/AddPostCard";
 import PostCardsList from "@/components/specific/posts/PostCardList";
+import { useQuery } from "@tanstack/react-query";
 
 const Home = () => {
+  const { data: userData } = useQuery({
+    queryKey: ["user-data"],
+    queryFn: () => getSingleUserAPI(),
+  });
   return (
     <div className="w-full h-[90vh] mt-5 flex flex-col">
       <div className="flex-none mb-4">
-        <AddPostCard />
+        <AddPostCard user={userData} />
       </div>
 
       <div
