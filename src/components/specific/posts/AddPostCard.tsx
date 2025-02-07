@@ -8,8 +8,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { addPostAPI } from "@/APIs/postAPIs";
 import MediaViewer from "../../ui/MediaView";
+import { userInterface } from "@/types/types";
 
-const AddPostCard = () => {
+const AddPostCard = ({ user }: { user: userInterface }) => {
   const queryClient = useQueryClient();
   const [postImage, setPostImage] = useState<File | null>(null);
   const [caption, setCaption] = useState<string>("");
@@ -58,7 +59,7 @@ const AddPostCard = () => {
         <div className="flex gap-3 items-center">
           <Avatar className="w-12 h-12">
             <AvatarImage
-              src="https://github.com/shadcn.png"
+              src={user?.avatarUrl || "https://github.com/shadcn.png"}
               alt="User Avatar"
             />
           </Avatar>
