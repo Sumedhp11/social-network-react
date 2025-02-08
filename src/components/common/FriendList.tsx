@@ -31,7 +31,7 @@ const FriendList = ({ userId }: { userId?: number | undefined }) => {
             <NoDataFound text="No Friends" />
           ) : (
             friendsList?.map((i: userInterface) => (
-              <div key={i.id}>
+              <div key={i.friendId}>
                 <Link
                   to={`/profile/${i.friendId}`}
                   className="p-2 flex items-center gap-4 cursor-pointer"
