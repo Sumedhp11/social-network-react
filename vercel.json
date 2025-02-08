@@ -3,13 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://social-network-backend-5rrl.onrender.com/api/:path*"
-    }
-  ],
-  "redirects": [
+    },
     {
-      "source": "/:path*",
-      "destination": "/",
-      "permanent": false
+      "source": "/((?!api).*)",
+      "destination": "/index.html"
     }
   ]
 }
