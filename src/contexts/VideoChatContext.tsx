@@ -111,14 +111,16 @@ export const VideoChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   /** ✅ End an active call */
   const endCall = () => {
+    console.log("worked");
+
     socket.emit(socketEvents.END_CALL, { recipientId: recipientId });
 
     peerConnectionRef.current?.close();
     peerConnectionRef.current = null;
 
     localStream?.getTracks().forEach((track) => track.stop());
-    setLocalStream(null);
-    setRemoteStream(null);
+    remoteStream?.getTracks().forEach((track) => track.stop());
+
 
     setIsInCall(false);
     setOpenDialog(false);

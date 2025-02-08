@@ -23,22 +23,28 @@ const socketEvents = {
   INCOMING_CALL: "INCOMING_CALL",
   CALL_ENDED: "CALL_ENDED",
 };
-
 const ICE_SERVERS: RTCConfiguration = {
   iceServers: [
-    {
-      urls: [
-        "stun:stun.l.google.com:19302",
-        "stun:stun1.l.google.com:19302",
-        "stun:stun2.l.google.com:19302",
-        "stun:stun3.l.google.com:19302",
-        "stun:stun4.l.google.com:19302",
-      ],
-    },
+    // Free STUN Servers (Google's public STUN)
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" },
+    { urls: "stun:stun.voipbuster.com:3478" },
+
+    // Free TURN Servers (Test carefully - may have usage limits)
     {
       urls: "turn:openrelay.metered.ca:80",
       username: "openrelayproject",
       credential: "openrelayproject",
+    },
+    {
+      urls: "turn:turn.terminal123.com:3478",
+      username: "test",
+      credential: "test123",
+    },
+    {
+      urls: "turn:relay.antareja.com:3478",
+      username: "user",
+      credential: "antareja",
     },
   ],
 };

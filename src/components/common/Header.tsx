@@ -4,13 +4,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import NotificationPopup from "./NotificationPopup";
 import SearchBox from "./SearchBox";
 import UserProfilePopup from "./UserProfilePopup";
+import headerLogo from "@/assets/header-logo.png";
 
 const Header = () => {
   return (
     <div className="h-14 flex items-center justify-between px-4 py-2">
       <div className="flex items-center">
         <Link to={"/"}>
-          <h1 className="text-xl font-semibold text-white">App Logo</h1>
+          <Avatar className="w-12 h-12 bg-white">
+            <AvatarImage src={headerLogo} alt="User Avatar" />
+          </Avatar>
         </Link>
       </div>
 
