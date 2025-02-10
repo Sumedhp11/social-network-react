@@ -30,21 +30,10 @@ const ICE_SERVERS: RTCConfiguration = {
     { urls: "stun:stun1.l.google.com:19302" },
     { urls: "stun:stun.voipbuster.com:3478" },
 
-    // Free TURN Servers (Test carefully - may have usage limits)
     {
-      urls: "turn:openrelay.metered.ca:80",
-      username: "openrelayproject",
-      credential: "openrelayproject",
-    },
-    {
-      urls: "turn:turn.terminal123.com:3478",
-      username: "test",
-      credential: "test123",
-    },
-    {
-      urls: "turn:relay.antareja.com:3478",
-      username: "user",
-      credential: "antareja",
+      urls: "relay1.expressturn.com:3478",
+      username: "ef7S6M6U80AZBN01P9",
+      credential: "VweYZ3NdXyTSUAuT",
     },
   ],
 };
