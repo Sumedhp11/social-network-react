@@ -202,6 +202,17 @@ const unFriendAPI = async (friendshipId: number) => {
     }
   }
 };
+const editUserDataAPI = async (formData: FormData) => {
+  try {
+    const res = await axiosIntance.patch(`/user/update-user-data`, formData);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    if (isAxiosError(error)) {
+      return error.response?.data;
+    }
+  }
+};
 
 export {
   loginAPI,
@@ -217,4 +228,5 @@ export {
   getRecommendedUsersAPI,
   registerAPI,
   unFriendAPI,
+  editUserDataAPI,
 };

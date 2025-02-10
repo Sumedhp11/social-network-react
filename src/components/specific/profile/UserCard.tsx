@@ -17,18 +17,24 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { Ellipsis, KeyRound, UserPen } from "lucide-react";
 import { useState } from "react";
+import EditProfileForm from "./EditProfileForm";
 
 const UserCard = ({ userId }: { userId: number }) => {
   const [openPopup, setOpenPopup] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+
   const { data: userData, isLoading } = useQuery({
     queryKey: ["user-data", userId],
     queryFn: () => getSingleUserAPI(userId),
   });
 
-  return isLoading ? (
-    <Loader />
-  ) : (
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  return (
     <div className="grid grid-cols-8 p-3 my-4 relative">
+      {/* User Info Section */}
       <div className="col-span-4 flex flex-col items-start">
         <div className="flex flex-col space-y-5 items-start">
           <Avatar className="w-24 h-24 ring-2 ring-white ml-3">
@@ -51,13 +57,13 @@ const UserCard = ({ userId }: { userId: number }) => {
           </div>
         </div>
       </div>
-
       <div className="col-span-2 flex flex-col max-h-20 justify-center">
         <p className="font-semibold text-base text-white text-center">
           {userData?.friendships?.length}
         </p>
         <p className="text-gray-300 text-base text-center">Friends</p>
       </div>
+
       <div className="col-span-2 flex flex-col max-h-20 justify-center">
         <p className="font-semibold text-base text-white text-center">
           {userData?.posts?.length}
@@ -67,23 +73,29 @@ const UserCard = ({ userId }: { userId: number }) => {
 
       <div className="absolute right-1 top-1">
         <Popover open={openPopup} onOpenChange={setOpenPopup}>
-          <PopoverTrigger onClick={() => setOpenPopup(true)}>
+          <PopoverTrigger>
             <Ellipsis size={27} className="text-white" />
           </PopoverTrigger>
           <PopoverContent className="flex flex-col w-fit p-2">
             <ul>
-              <Dialog>
-                <DialogTrigger onClick={() => setOpenPopup(false)}>
+              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                <DialogTrigger>
                   <li className="list-none flex items-center gap-4 p-2 border-b border-gray-600 cursor-pointer hover:bg-gray-100">
                     <UserPen size={20} className="text-black" />
                     <p>Update Profile</p>
                   </li>
                 </DialogTrigger>
+
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogTitle>Edit Profile</DialogTitle>
                     <DialogDescription></DialogDescription>
                   </DialogHeader>
+
+                  <EditProfileForm
+                    userData={userData}
+                    setOpenDialog={setOpenDialog}
+                  />
                 </DialogContent>
               </Dialog>
 

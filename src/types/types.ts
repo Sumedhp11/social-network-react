@@ -6,6 +6,7 @@ export interface userInterface {
   friendshipStatus?: string;
   friendships?: [];
   friendId?: number;
+  email?: string;
   chat: {
     id: number | null;
     last_message: string | null;
