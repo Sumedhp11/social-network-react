@@ -2,9 +2,6 @@ import axios from "axios";
 
 const server_url = import.meta.env.VITE_BACKEND_URL;
 const socket_url = import.meta.env.VITE_SOCKET_URL;
-const turn_server_url = import.meta.env.VITE_TURN_SERVER_URL;
-const turn_server_username = import.meta.env.VITE_TURN_SERVER_USERNAME;
-const turn_server_password = import.meta.env.VITE_TURN_SERVER_PASSWORD;
 const axiosIntance = axios.create({
   baseURL: server_url,
   withCredentials: true,
@@ -32,11 +29,10 @@ const ICE_SERVERS: RTCConfiguration = {
     { urls: "stun:stun.l.google.com:19302" },
     { urls: "stun:stun1.l.google.com:19302" },
     { urls: "stun:stun.voipbuster.com:3478" },
-
     {
-      urls: turn_server_url,
-      username: turn_server_username,
-      credential: turn_server_password,
+      urls: "turn:relay1.expressturn.com:3478",
+      username: "ef7S6M6U80AZBN01P9",
+      credential: "VweYZ3NdXyTSUAuT",
     },
   ],
 };
