@@ -1,20 +1,36 @@
 import { getSingleUserAPI } from "@/APIs/authAPIs";
 import Loader from "@/components/ui/Loader";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useQuery } from "@tanstack/react-query";
+import { Ellipsis, KeyRound, UserPen } from "lucide-react";
+import { useState } from "react";
 
 const UserCard = ({ userId }: { userId: number }) => {
+  const [openPopup, setOpenPopup] = useState(false);
   const { data: userData, isLoading } = useQuery({
     queryKey: ["user-data", userId],
     queryFn: () => getSingleUserAPI(userId),
   });
-  
+
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="grid grid-cols-8 p-3 my-4">
+    <div className="grid grid-cols-8 p-3 my-4 relative">
       <div className="col-span-4 flex flex-col items-start">
-        <div className="flex flex-col space-y-5 items-start ">
+        <div className="flex flex-col space-y-5 items-start">
           <Avatar className="w-24 h-24 ring-2 ring-white ml-3">
             <AvatarImage
               src={
@@ -37,7 +53,7 @@ const UserCard = ({ userId }: { userId: number }) => {
       </div>
 
       <div className="col-span-2 flex flex-col max-h-20 justify-center">
-        <p className="font-semibold text-base text-white text-center ">
+        <p className="font-semibold text-base text-white text-center">
           {userData?.friendships?.length}
         </p>
         <p className="text-gray-300 text-base text-center">Friends</p>
@@ -47,6 +63,37 @@ const UserCard = ({ userId }: { userId: number }) => {
           {userData?.posts?.length}
         </p>
         <p className="text-gray-300 text-base text-center">Posts</p>
+      </div>
+
+      <div className="absolute right-1 top-1">
+        <Popover open={openPopup} onOpenChange={setOpenPopup}>
+          <PopoverTrigger onClick={() => setOpenPopup(true)}>
+            <Ellipsis size={27} className="text-white" />
+          </PopoverTrigger>
+          <PopoverContent className="flex flex-col w-fit p-2">
+            <ul>
+              <Dialog>
+                <DialogTrigger onClick={() => setOpenPopup(false)}>
+                  <li className="list-none flex items-center gap-4 p-2 border-b border-gray-600 cursor-pointer hover:bg-gray-100">
+                    <UserPen size={20} className="text-black" />
+                    <p>Update Profile</p>
+                  </li>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogDescription></DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+
+              <li className="list-none flex items-center gap-4 p-2 cursor-pointer hover:bg-gray-100">
+                <KeyRound size={20} className="text-black" />
+                <p>Reset Password</p>
+              </li>
+            </ul>
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );
