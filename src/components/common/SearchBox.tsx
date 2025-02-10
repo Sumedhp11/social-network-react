@@ -63,7 +63,7 @@ const SearchBox = () => {
       {isLoading && <Loader />}
       {isError && <p>Error fetching users.</p>}
       {data && data.length > 0 && (
-        <ul className="absolute bg-white border border-gray-300 w-full mt-1 rounded">
+        <ul className="absolute bg-white border border-gray-300 w-full mt-1 rounded z-30">
           {data.map((user: userInterface) => (
             <div
               key={user.id}
