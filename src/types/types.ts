@@ -1,13 +1,16 @@
 export interface userInterface {
   id: number;
   username: string;
+  bio?: string;
   avatarUrl: string;
   friendshipStatus?: string;
+  friendships?: [];
   friendId?: number;
   chat: {
     id: number | null;
     last_message: string | null;
   };
+  posts?: [];
 }
 export interface PostData {
   id: number;

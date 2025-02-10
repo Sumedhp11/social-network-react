@@ -47,7 +47,7 @@ const SearchBox = () => {
     sendFriendRequestMutation({ friendId });
   }
   return (
-    <div className="relative w-96">
+    <div className="relative md:w-96">
       <Input
         placeholder="Search"
         className={`pr-10 text-black placeholder:text-white border border-gray-400 outline-none focus:bg-white focus:border-gray-400 focus:outline-none bg-cardGray ${

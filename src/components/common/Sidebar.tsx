@@ -1,17 +1,17 @@
+import { userInterface } from "@/types/types";
 import { Link } from "react-router";
+import SideBarCardSkeleton from "../specific/SideBarCardSkeleton";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Card, CardContent } from "../ui/card";
 import { Separator } from "../ui/separator";
-import { useQuery } from "@tanstack/react-query";
-import { getSingleUserAPI } from "@/APIs/authAPIs";
-import SideBarCardSkeleton from "../specific/SideBarCardSkeleton";
 
-const Sidebar = () => {
-  const { data: userData, isLoading } = useQuery({
-    queryKey: ["user-data"],
-    queryFn: () => getSingleUserAPI(),
-  });
-
+const Sidebar = ({
+  userData,
+  isLoading,
+}: {
+  userData: userInterface;
+  isLoading: boolean;
+}) => {
   return isLoading ? (
     <SideBarCardSkeleton />
   ) : (

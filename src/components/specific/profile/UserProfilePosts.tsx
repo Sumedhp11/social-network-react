@@ -11,12 +11,11 @@ const UserProfilePosts = ({ userId }: { userId: number }) => {
     queryFn: () => getUserPostsAPI({ userId: Number(userId) }),
     enabled: !!userId,
   });
-  console.log(data);
 
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="w-full p-4 space-y-4 border-t">
+    <div className="w-full p-4 space-y-4 ">
       {data?.length > 0 ? (
         data.map((post: PostData) => <PostCard post={post} key={post.id} />)
       ) : (
