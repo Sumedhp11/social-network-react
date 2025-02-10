@@ -191,6 +191,17 @@ const getRecommendedUsersAPI = async () => {
     }
   }
 };
+const unFriendAPI = async (friendshipId: number) => {
+  try {
+    const res = await axiosIntance.delete(`/friends/unfriend/${friendshipId}`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    if (isAxiosError(error)) {
+      return error.response?.data;
+    }
+  }
+};
 
 export {
   loginAPI,
@@ -205,4 +216,5 @@ export {
   getFriendsAPI,
   getRecommendedUsersAPI,
   registerAPI,
+  unFriendAPI,
 };

@@ -11,6 +11,7 @@ export interface userInterface {
     last_message: string | null;
   };
   posts?: [];
+  friendshipId?: number;
 }
 export interface PostData {
   id: number;
