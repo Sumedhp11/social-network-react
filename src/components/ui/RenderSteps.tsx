@@ -5,17 +5,21 @@ import RenderSummary from "@/components/specific/auth/RenderSummary";
 import Step2 from "@/components/specific/auth/SecondStep";
 import Step3 from "@/components/specific/auth/ThirdStep";
 
-export const renderStep = (
-  activeStep: number,
-  setActiveStep: (prev: any) => void
-) => {
+const StepRenderer = ({
+  activeStep,
+  setActiveStep,
+}: {
+  activeStep: number;
+  setActiveStep: React.Dispatch<React.SetStateAction<number>>;
+}) => {
   const [formData, setFormData] = useState<formdata>({});
+
   const setStepData = (data: Partial<formdata>) => {
     setFormData((prev) => ({ ...prev, ...data }));
   };
 
-  const handleNext = () => setActiveStep((prev: number) => prev + 1);
-  const handleBack = () => setActiveStep((prev: number) => prev - 1);
+  const handleNext = () => setActiveStep((prev) => prev + 1);
+  const handleBack = () => setActiveStep((prev) => prev - 1);
 
   switch (activeStep) {
     case 1:
@@ -42,3 +46,5 @@ export const renderStep = (
       return null;
   }
 };
+
+export default StepRenderer;

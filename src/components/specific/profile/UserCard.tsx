@@ -1,4 +1,5 @@
 import { getSingleUserAPI } from "@/APIs/authAPIs";
+import ResetPasswordForm from "@/components/forms/ResetPasswordForm";
 import Loader from "@/components/ui/Loader";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -17,11 +18,12 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { Ellipsis, KeyRound, UserPen } from "lucide-react";
 import { useState } from "react";
-import EditProfileForm from "./EditProfileForm";
+import EditProfileForm from "../../forms/EditProfileForm";
 
 const UserCard = ({ userId }: { userId: number }) => {
   const [openPopup, setOpenPopup] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openEditProfileDialog, setOpenEditProfileDialog] = useState(false);
+  const [openResetPasswordDialog, setOpenResetPasswordDialog] = useState(false);
 
   const { data: userData, isLoading } = useQuery({
     queryKey: ["user-data", userId],
@@ -77,33 +79,49 @@ const UserCard = ({ userId }: { userId: number }) => {
             <Ellipsis size={27} className="text-white" />
           </PopoverTrigger>
           <PopoverContent className="flex flex-col w-fit p-2">
-            <ul>
-              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-                <DialogTrigger>
-                  <li className="list-none flex items-center gap-4 p-2 border-b border-gray-600 cursor-pointer hover:bg-gray-100">
-                    <UserPen size={20} className="text-black" />
-                    <p>Update Profile</p>
-                  </li>
-                </DialogTrigger>
+            <Dialog
+              open={openEditProfileDialog}
+              onOpenChange={setOpenEditProfileDialog}
+            >
+              <DialogTrigger>
+                <li className="list-none flex items-center gap-4 p-2 border-b border-gray-600 cursor-pointer hover:bg-gray-100">
+                  <UserPen size={20} className="text-black" />
+                  <p>Update Profile</p>
+                </li>
+              </DialogTrigger>
 
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Edit Profile</DialogTitle>
-                    <DialogDescription></DialogDescription>
-                  </DialogHeader>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit Profile</DialogTitle>
+                  <DialogDescription></DialogDescription>
+                </DialogHeader>
 
-                  <EditProfileForm
-                    userData={userData}
-                    setOpenDialog={setOpenDialog}
-                  />
-                </DialogContent>
-              </Dialog>
+                <EditProfileForm
+                  userData={userData}
+                  setOpenDialog={setOpenEditProfileDialog}
+                />
+              </DialogContent>
+            </Dialog>
+            <Dialog
+              open={openResetPasswordDialog}
+              onOpenChange={setOpenResetPasswordDialog}
+            >
+              <DialogTrigger>
+                <li className="list-none flex items-center gap-4 p-2 cursor-pointer hover:bg-gray-100">
+                  <KeyRound size={20} className="text-black" />
+                  <p>Reset Password</p>
+                </li>
+              </DialogTrigger>
 
-              <li className="list-none flex items-center gap-4 p-2 cursor-pointer hover:bg-gray-100">
-                <KeyRound size={20} className="text-black" />
-                <p>Reset Password</p>
-              </li>
-            </ul>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Reset Password</DialogTitle>
+                  <DialogDescription></DialogDescription>
+                </DialogHeader>
+
+                <ResetPasswordForm setOpenDialog={setOpenResetPasswordDialog} />
+              </DialogContent>
+            </Dialog>
           </PopoverContent>
         </Popover>
       </div>

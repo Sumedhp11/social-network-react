@@ -110,7 +110,7 @@ const ChatDrawer = () => {
           open={openDrawer}
           onOpenChange={(value) => setOpenDrawer(value)}
         >
-          <DrawerContent className="w-[75%] md:w-[30%] h-[80%] right-3 p-0 bg-white">
+          <DrawerContent className="w-[75%] md:w-[30%] lg:w-[25%] h-[80%] right-3 p-0 bg-white">
             <DrawerHeader className="w-full rounded-t-lg border-b border-gray-400 text-zinc-800 relative flex items-center justify-center px-4 py-2 shadow-md">
               <DrawerTitle className="text-base font-medium">
                 Messages

@@ -214,6 +214,26 @@ const editUserDataAPI = async (formData: FormData) => {
   }
 };
 
+const verifyUserAPI = async ({
+  verification_code,
+  otpToken,
+}: {
+  verification_code: string;
+  otpToken: string;
+}) => {
+  try {
+    const res = await axios.post(`${server_url}/user/verify`, {
+      verification_code: verification_code,
+      otpToken,
+    });
+    return res.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      throw error.response?.data;
+    }
+  }
+};
+
 export {
   loginAPI,
   loginWithGoogleAPI,
@@ -229,4 +249,5 @@ export {
   registerAPI,
   unFriendAPI,
   editUserDataAPI,
+  verifyUserAPI,
 };

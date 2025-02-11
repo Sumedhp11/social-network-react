@@ -52,7 +52,7 @@ const AppLayout = ({
               </aside>
             </div>
 
-            <div className="z-50 rounded-sm w-[35%] md:w-[18%] fixed bottom-1 right-4 flex justify-center items-center">
+            <div className="z-50 rounded-sm w-[50%] md:w-[40%] lg:w-[20%] fixed bottom-1 right-4 flex justify-center items-center">
               <ChatDrawer />
             </div>
           </VideoChatProvider>{" "}

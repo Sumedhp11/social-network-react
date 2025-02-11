@@ -18,7 +18,11 @@ const RenderSummary = ({ formData }: { formData: formdata }) => {
       toast.success(data.message, {
         position: "bottom-center",
       });
-      navigate("/");
+      if (!sessionStorage.getItem("otp-token")) {
+        sessionStorage.setItem("otp-token", data.data.otpToken);
+      }
+
+      navigate("/verify");
     },
     onError: (error) => {
       toast.error(error.message);

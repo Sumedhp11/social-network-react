@@ -17,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { z } from "zod";
 
 const EditProfileForm = ({
@@ -46,6 +47,9 @@ const EditProfileForm = ({
     mutationFn: editUserDataAPI,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-data"] });
+      toast.success("User Profile Updated Successfuly", {
+        position: "top-right",
+      });
       setOpenDialog(false);
     },
   });
