@@ -1,5 +1,5 @@
 import { refreshAccessTokenAPI } from "@/APIs/authAPIs";
-import { axiosIntance, ICE_SERVERS, socketEvents } from "@/constants";
+import { axiosInstance, ICE_SERVERS, socketEvents } from "@/constants";
 import { clsx, type ClassValue } from "clsx";
 import { MutableRefObject } from "react";
 import toast from "react-hot-toast";
@@ -12,7 +12,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const setupAxiosInterceptor = () => {
-  axiosIntance.interceptors.response.use(
+  axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
       if (error.response.status === 401) {

@@ -1,4 +1,12 @@
+import { resetPasswordAPI } from "@/APIs/authAPIs";
+import { resetPasswordValidator } from "@/validators/ResetPasswordValidator";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { z } from "zod";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -9,47 +17,48 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router";
 
-const ResetPasswordForm = ({
-  setOpenDialog,
-}: {
-  setOpenDialog: (value: boolean) => void;
-}) => {
+const ResetPasswordForm = ({ token }: { token: string }) => {
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const navigate = useNavigate();
 
-  const form = useForm();
-  const onSubmit = async (values) => {};
+  const { mutate: resetPasswordMutate, isPending } = useMutation({
+    mutationFn: resetPasswordAPI,
+    onSuccess: (message) => {
+      toast.success(message);
+      //   navigate("/", {
+      //     replace: true,
+      //   });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+      //   navigate("/", { replace: true });
+    },
+  });
+
+  const form = useForm<z.infer<typeof resetPasswordValidator>>({
+    resolver: zodResolver(resetPasswordValidator),
+    mode: "onSubmit",
+  });
+
+  const onSubmit = (values: z.infer<typeof resetPasswordValidator>) => {
+    resetPasswordMutate({
+      new_password: values.new_password,
+      otpToken: token!,
+    });
+  };
+
   return (
     <div className="w-full h-full p-2">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
-            name="current_password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-black">Current Password</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter Current Password"
-                    {...field}
-                    type={"password"}
-                    className="placeholder:text-gray-700 bg-white"
-                    autoComplete="current_password"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name="new_password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-black">New Password</FormLabel>
+                <FormLabel className="text-white">New Password</FormLabel>
                 <FormControl>
                   <div className="relative w-full">
                     <Input
@@ -57,6 +66,7 @@ const ResetPasswordForm = ({
                       {...field}
                       type={showNewPassword ? "text" : "password"}
                       className="placeholder:text-gray-700 bg-white"
+                      autoComplete="new-password"
                     />
                     {showNewPassword ? (
                       <EyeOff
@@ -75,12 +85,13 @@ const ResetPasswordForm = ({
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="confirm_new_password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-black">
+                <FormLabel className="text-white">
                   Confirm New Password
                 </FormLabel>
                 <FormControl>
@@ -89,6 +100,7 @@ const ResetPasswordForm = ({
                     {...field}
                     type={showNewPassword ? "text" : "password"}
                     className="placeholder:text-gray-700 bg-white"
+                    autoComplete="new-password"
                   />
                 </FormControl>
                 <FormMessage />
@@ -100,9 +112,9 @@ const ResetPasswordForm = ({
             <Button
               type="submit"
               className="bg-[#189FF2] hover:bg-blue-600 w-full"
-              disabled={!form.formState.isDirty || !form.formState.isValid}
+              disabled={!form.formState.isDirty || isPending}
             >
-              Save Changes
+              {isPending ? "Resetting Password" : "Reset Password"}
             </Button>
           </div>
         </form>

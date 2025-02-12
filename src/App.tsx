@@ -9,12 +9,16 @@ const Verify = lazy(() => import("@/components/pages/auth/Verify"));
 const AppLayout = lazy(() => import("@/components/layouts/AppLayout"));
 const Home = lazy(() => import("@/components/pages/main/Home"));
 const UserProfile = lazy(() => import("@/components/pages/main/UserProfile"));
+const ResetPassword = lazy(
+  () => import("@/components/pages/auth/ResetPassword")
+);
 const App = () => {
   return (
     <Router>
       <Suspense fallback={<Loader />}>
         <ProtectedRoute>
           <Routes>
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route
               path="/login"
               element={<AuthLayout component={<Login />} />}

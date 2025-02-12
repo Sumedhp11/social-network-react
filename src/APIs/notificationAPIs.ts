@@ -1,9 +1,9 @@
-import { axiosIntance } from "@/constants";
+import { axiosInstance } from "@/constants";
 import { isAxiosError } from "axios";
 
 const getAllNotifications = async () => {
   try {
-    const res = await axiosIntance.get(`/notification/get-notification`);
+    const res = await axiosInstance.get(`/notification/get-notification`);
     return res?.data?.data;
   } catch (error) {
     if (isAxiosError(error)) {

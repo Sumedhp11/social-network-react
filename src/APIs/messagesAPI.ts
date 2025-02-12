@@ -1,4 +1,4 @@
-import { axiosIntance } from "@/constants";
+import { axiosInstance } from "@/constants";
 import { isAxiosError } from "axios";
 
 const getAllMessages = async ({
@@ -10,7 +10,7 @@ const getAllMessages = async ({
 }) => {
   try {
     if (!chatId) return;
-    const res = await axiosIntance.get(
+    const res = await axiosInstance.get(
       `/chat/get-messages?chatId=${chatId}&page=${page}&limit=${10}`
     );
     return res?.data;

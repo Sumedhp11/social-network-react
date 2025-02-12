@@ -1,4 +1,4 @@
-import { axiosIntance, server_url } from "@/constants";
+import { axiosInstance, server_url } from "@/constants";
 import { CredentialResponse } from "@react-oauth/google";
 import axios, { isAxiosError } from "axios";
 
@@ -94,11 +94,11 @@ const getSingleUserAPI = async (userId?: number) => {
       url += `?userId=${userId}`;
     }
 
-    const res = await axiosIntance.get(url);
+    const res = await axiosInstance.get(url);
     return res?.data?.data;
   } catch (error) {
     if (isAxiosError(error)) {
-      return error.response?.data;
+      throw error.response?.data;
     }
   }
 };
@@ -106,11 +106,11 @@ const getSingleUserAPI = async (userId?: number) => {
 const logoutAPI = async () => {
   try {
     const url = `/user/logout`;
-    const res = await axiosIntance.get(url);
+    const res = await axiosInstance.get(url);
     return res?.data?.data;
   } catch (error) {
     if (isAxiosError(error)) {
-      return error.response?.data;
+      throw error.response?.data;
     }
   }
 };
@@ -121,11 +121,11 @@ const getUsersAPI = async ({ searchTerm }: { searchTerm: string }) => {
     if (searchTerm) {
       url += `?search=${searchTerm}`;
     }
-    const res = await axiosIntance.get(url);
+    const res = await axiosInstance.get(url);
     return res?.data?.data;
   } catch (error) {
     if (isAxiosError(error)) {
-      return error.response?.data;
+      throw error.response?.data;
     }
   }
 };
@@ -134,11 +134,11 @@ const sendFriendRequestAPI = async ({ friendId }: { friendId: number }) => {
   try {
     const url = `/friends/add-friend`;
 
-    const res = await axiosIntance.post(url, { friendId });
+    const res = await axiosInstance.post(url, { friendId });
     return res?.data;
   } catch (error) {
     if (isAxiosError(error)) {
-      return error.response?.data;
+      throw error.response?.data;
     }
   }
 };
@@ -152,11 +152,11 @@ const HandleFriendRequestAPI = async ({
   try {
     const url = `/friends/handle-friend-request`;
 
-    const res = await axiosIntance.post(url, { friendShipId, action });
+    const res = await axiosInstance.post(url, { friendShipId, action });
     return res?.data;
   } catch (error) {
     if (isAxiosError(error)) {
-      return error.response?.data;
+      throw error.response?.data;
     }
   }
 };
@@ -171,45 +171,45 @@ const getFriendsAPI = async (username?: string, userId?: number) => {
       url += `?userId=${userId}`;
     }
 
-    const res = await axiosIntance.get(url);
+    const res = await axiosInstance.get(url);
     return res?.data?.data;
   } catch (error) {
     if (isAxiosError(error)) {
-      return error.response?.data;
+      throw error.response?.data;
     }
   }
 };
 
 const getRecommendedUsersAPI = async () => {
   try {
-    const res = await axiosIntance.get("/friends/get-recommended-friends");
+    const res = await axiosInstance.get("/friends/get-recommended-friends");
     return res.data?.data;
   } catch (error) {
     console.log(error);
     if (isAxiosError(error)) {
-      return error.response?.data;
+      throw error.response?.data;
     }
   }
 };
 const unFriendAPI = async (friendshipId: number) => {
   try {
-    const res = await axiosIntance.delete(`/friends/unfriend/${friendshipId}`);
+    const res = await axiosInstance.delete(`/friends/unfriend/${friendshipId}`);
     return res.data;
   } catch (error) {
     console.log(error);
     if (isAxiosError(error)) {
-      return error.response?.data;
+      throw error.response?.data;
     }
   }
 };
 const editUserDataAPI = async (formData: FormData) => {
   try {
-    const res = await axiosIntance.patch(`/user/update-user-data`, formData);
+    const res = await axiosInstance.post(`/user/update-user-data`, formData);
     return res.data;
   } catch (error) {
     console.log(error);
     if (isAxiosError(error)) {
-      return error.response?.data;
+      throw error.response?.data;
     }
   }
 };
@@ -234,7 +234,69 @@ const verifyUserAPI = async ({
   }
 };
 
+const changePasswordAPI = async ({
+  current_password,
+  new_password,
+  isGoogleSignedIn,
+}: {
+  current_password?: string;
+  new_password: string;
+  isGoogleSignedIn?: boolean;
+}) => {
+  try {
+    const res = await axiosInstance.post(`/user/change-password`, {
+      current_password,
+      new_password,
+      isGoogleSignedIn,
+    });
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    if (isAxiosError(error)) {
+      throw error.response?.data;
+    }
+  }
+};
+
+const sendResetPasswordMailAPI = async (email: string) => {
+  try {
+    const res = await axiosInstance.post(`/user/send-reset-password-mail`, {
+      email,
+    });
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    if (isAxiosError(error)) {
+      throw error.response?.data;
+    }
+  }
+};
+
+const resetPasswordAPI = async ({
+  otpToken,
+  new_password,
+}: {
+  otpToken: string;
+  new_password: string;
+}) => {
+  try {
+    const res = await axiosInstance.post(`/user/reset-password`, {
+      otpToken,
+      new_password,
+    });
+    console.log(res, 287);
+
+    return res.data.message;
+  } catch (error) {
+    console.log(error, 291);
+
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data?.message || "Something went wrong");
+    }
+  }
+};
 export {
+  changePasswordAPI,
   loginAPI,
   loginWithGoogleAPI,
   refreshAccessTokenAPI,
@@ -250,4 +312,6 @@ export {
   unFriendAPI,
   editUserDataAPI,
   verifyUserAPI,
+  sendResetPasswordMailAPI,
+  resetPasswordAPI,
 };

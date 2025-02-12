@@ -1,5 +1,4 @@
 import { getSingleUserAPI } from "@/APIs/authAPIs";
-import ResetPasswordForm from "@/components/forms/ResetPasswordForm";
 import Loader from "@/components/ui/Loader";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -19,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Ellipsis, KeyRound, UserPen } from "lucide-react";
 import { useState } from "react";
 import EditProfileForm from "../../forms/EditProfileForm";
+import ChangePasswordForm from "@/components/forms/ChangePasswordForm";
 
 const UserCard = ({ userId }: { userId: number }) => {
   const [openPopup, setOpenPopup] = useState(false);
@@ -109,17 +109,20 @@ const UserCard = ({ userId }: { userId: number }) => {
               <DialogTrigger>
                 <li className="list-none flex items-center gap-4 p-2 cursor-pointer hover:bg-gray-100">
                   <KeyRound size={20} className="text-black" />
-                  <p>Reset Password</p>
+                  <p>Change Password</p>
                 </li>
               </DialogTrigger>
 
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Reset Password</DialogTitle>
+                  <DialogTitle>Change Password</DialogTitle>
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
 
-                <ResetPasswordForm setOpenDialog={setOpenResetPasswordDialog} />
+                <ChangePasswordForm
+                  userData={userData}
+                  setOpenDialog={setOpenResetPasswordDialog}
+                />
               </DialogContent>
             </Dialog>
           </PopoverContent>

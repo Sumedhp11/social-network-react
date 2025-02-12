@@ -1,9 +1,9 @@
-import { axiosIntance } from "@/constants";
+import { axiosInstance } from "@/constants";
 import { isAxiosError } from "axios";
 
 const addPostAPI = async (formdata: FormData) => {
   try {
-    const res = await axiosIntance.post(`/post/add-post`, formdata);
+    const res = await axiosInstance.post(`/post/add-post`, formdata);
     return res.data;
   } catch (error) {
     if (isAxiosError(error)) {
@@ -20,7 +20,7 @@ const getAllpostsAPI = async ({
   limit: number;
 }) => {
   try {
-    const res = await axiosIntance.get(
+    const res = await axiosInstance.get(
       `/post/get-post?page=${page}&limit=${limit}`
     );
     return res?.data?.data;
@@ -33,7 +33,7 @@ const getAllpostsAPI = async ({
 
 const getUserPostsAPI = async ({ userId }: { userId: number }) => {
   try {
-    const res = await axiosIntance.get(`/user/get-user-posts/${userId}`);
+    const res = await axiosInstance.get(`/user/get-user-posts/${userId}`);
     console.log(res.data);
 
     return res?.data?.data;
@@ -44,7 +44,6 @@ const getUserPostsAPI = async ({ userId }: { userId: number }) => {
   }
 };
 
-
 const addCommentAPI = async ({
   post_id,
   comment,
@@ -53,7 +52,7 @@ const addCommentAPI = async ({
   comment: string;
 }) => {
   try {
-    const res = await axiosIntance.post(`/post/add-comment`, {
+    const res = await axiosInstance.post(`/post/add-comment`, {
       postId: post_id,
       comment,
     });
@@ -68,7 +67,7 @@ const addCommentAPI = async ({
 
 const likePostAPI = async (post_id: number) => {
   try {
-    const res = await axiosIntance.post(`/post/like-post`, {
+    const res = await axiosInstance.post(`/post/like-post`, {
       post_id,
     });
     return res?.data;

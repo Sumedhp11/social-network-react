@@ -2,7 +2,7 @@ import axios from "axios";
 
 const server_url = import.meta.env.VITE_BACKEND_URL;
 const socket_url = import.meta.env.VITE_SOCKET_URL;
-const axiosIntance = axios.create({
+const axiosInstance = axios.create({
   baseURL: server_url,
   withCredentials: true,
 });
@@ -37,4 +37,4 @@ const ICE_SERVERS: RTCConfiguration = {
   ],
 };
 
-export { server_url, axiosIntance, socketEvents, socket_url, ICE_SERVERS };
+export { server_url, axiosInstance, socketEvents, socket_url, ICE_SERVERS };
