@@ -2,16 +2,18 @@ import AuthLayout from "@/components/layouts/AuthLayout";
 import { lazy, Suspense } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router";
 import ProtectedRoute from "./components/layouts/ProtectedRoute";
+import ForgetPassword from "./components/pages/auth/ForgetPassword";
 import Loader from "./components/ui/Loader";
 const Login = lazy(() => import("@/components/pages/auth/Login"));
+const ResetPassword = lazy(
+  () => import("@/components/pages/auth/ForgetPassword")
+);
 const Register = lazy(() => import("@/components/pages/auth/Register"));
 const Verify = lazy(() => import("@/components/pages/auth/Verify"));
 const AppLayout = lazy(() => import("@/components/layouts/AppLayout"));
 const Home = lazy(() => import("@/components/pages/main/Home"));
 const UserProfile = lazy(() => import("@/components/pages/main/UserProfile"));
-const ResetPassword = lazy(
-  () => import("@/components/pages/auth/ResetPassword")
-);
+
 const App = () => {
   return (
     <Router>
@@ -19,6 +21,10 @@ const App = () => {
         <ProtectedRoute>
           <Routes>
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route
+              path="/forget-password"
+              element={<AuthLayout component={<ForgetPassword />} />}
+            />
             <Route
               path="/login"
               element={<AuthLayout component={<Login />} />}

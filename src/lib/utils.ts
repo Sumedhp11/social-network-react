@@ -15,18 +15,21 @@ export const setupAxiosInterceptor = () => {
   axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
-      if (error.response.status === 401) {
+      if (error.response && error.response.status === 401) {
         try {
           await refreshAccessTokenAPI();
-          return error.request(error.config);
-        } catch (error) {
+          return axiosInstance(error.config);
+        } catch (refreshError) {
+          console.error("Token refresh failed:", refreshError);
           window.location.href = "/login";
-          return Promise.reject(error);
+          return Promise.reject(refreshError);
         }
       }
+      return Promise.reject(error);
     }
   );
 };
+
 
 interface SetupConnectionProps {
   peerConnectionRef: MutableRefObject<RTCPeerConnection | null>;

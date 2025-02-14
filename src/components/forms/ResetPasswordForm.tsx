@@ -27,13 +27,13 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
     mutationFn: resetPasswordAPI,
     onSuccess: (message) => {
       toast.success(message);
-      //   navigate("/", {
-      //     replace: true,
-      //   });
+        navigate("/", {
+          replace: true,
+        });
     },
     onError: (error) => {
       toast.error(error.message);
-      //   navigate("/", { replace: true });
+        navigate("/", { replace: true });
     },
   });
 

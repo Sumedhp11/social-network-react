@@ -284,12 +284,9 @@ const resetPasswordAPI = async ({
       otpToken,
       new_password,
     });
-    console.log(res, 287);
 
     return res.data.message;
   } catch (error) {
-    console.log(error, 291);
-
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data?.message || "Something went wrong");
     }
