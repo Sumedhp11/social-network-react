@@ -1,14 +1,15 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "../../ui/card";
-import { Avatar, AvatarImage } from "../../ui/avatar";
-import { Input } from "../../ui/input";
-import { Image as ImageIcon, Loader, Video } from "lucide-react";
-import { Button } from "../../ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 import { addPostAPI } from "@/APIs/postAPIs";
-import MediaViewer from "../../ui/MediaView";
 import { userInterface } from "@/types/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Image as ImageIcon, Loader, MonitorPlay, Video } from "lucide-react";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { Avatar, AvatarImage } from "../../ui/avatar";
+import { Button } from "../../ui/button";
+import { Card, CardContent } from "../../ui/card";
+import { Input } from "../../ui/input";
+import MediaViewer from "../../ui/MediaView";
+import { Link } from "react-router";
 
 const AddPostCard = ({ user }: { user: userInterface }) => {
   const queryClient = useQueryClient();
@@ -138,6 +139,17 @@ const AddPostCard = ({ user }: { user: userInterface }) => {
               onChange={handleImageChange}
               className="hidden"
             />
+            <Link
+              to={"/live-stream"}
+              className="cursor-pointer rounded-3xl border border-[#2B3A45] w-28 flex justify-center items-center gap-3 py-2"
+            >
+              <MonitorPlay
+                size={25}
+                className="text-red-600"
+                strokeWidth={2.4}
+              />
+              <p className="text-sm text-white">Live</p>
+            </Link>
           </div>
         )}
       </CardContent>

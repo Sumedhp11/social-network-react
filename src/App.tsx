@@ -2,17 +2,22 @@ import AuthLayout from "@/components/layouts/AuthLayout";
 import { lazy, Suspense } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router";
 import ProtectedRoute from "./components/layouts/ProtectedRoute";
-import ForgetPassword from "./components/pages/auth/ForgetPassword";
 import Loader from "./components/ui/Loader";
+
 const Login = lazy(() => import("@/components/pages/auth/Login"));
 const ResetPassword = lazy(
   () => import("@/components/pages/auth/ForgetPassword")
 );
 const Register = lazy(() => import("@/components/pages/auth/Register"));
+const ForgetPassword = lazy(
+  () => import("@/components/pages/auth/ForgetPassword")
+);
 const Verify = lazy(() => import("@/components/pages/auth/Verify"));
+
 const AppLayout = lazy(() => import("@/components/layouts/AppLayout"));
 const Home = lazy(() => import("@/components/pages/main/Home"));
 const UserProfile = lazy(() => import("@/components/pages/main/UserProfile"));
+const LiveStream = lazy(() => import("@/components/pages/main/LiveStream"));
 
 const App = () => {
   return (
@@ -41,6 +46,11 @@ const App = () => {
               path="/"
               index
               element={<AppLayout component={<Home />} />}
+            />
+            <Route
+              path="/live-stream/"
+              index
+              element={<AppLayout component={<LiveStream />} />}
             />
             <Route
               path="/profile/:userId"

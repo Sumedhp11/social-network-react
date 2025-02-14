@@ -16,6 +16,7 @@ const AppLayout = ({
 }>) => {
   const location = useLocation();
   const isProfilePage = location.pathname.startsWith("/profile");
+  const isLiveStreamPage = location.pathname.startsWith("/live-stream");
 
   const { data: userData, isLoading } = useQuery({
     queryKey: ["user-data"],
@@ -32,7 +33,7 @@ const AppLayout = ({
         <SocketProvider>
           <VideoChatProvider>
             <div className="w-full flex-1 grid grid-cols-12">
-              {!isProfilePage && (
+              {!isProfilePage && !isLiveStreamPage && (
                 <aside className="hidden lg:block lg:col-span-2 h-full">
                   <Sidebar userData={userData} isLoading={isLoading} />
                 </aside>
@@ -40,16 +41,22 @@ const AppLayout = ({
 
               <main
                 className={`col-span-12 p-2 ${
-                  !isProfilePage ? "lg:col-span-7" : "lg:col-span-9"
+                  isProfilePage
+                    ? "lg:col-span-9"
+                    : isLiveStreamPage
+                    ? "lg:col-span-12"
+                    : "lg:col-span-7"
                 }`}
               >
                 {component}
               </main>
 
               {/* Right Aside (always visible on lg) */}
-              <aside className="hidden lg:block lg:col-span-3 h-full">
-                <RecommendationCard />
-              </aside>
+              {!isLiveStreamPage ? (
+                <aside className="hidden lg:block lg:col-span-3 h-full">
+                  <RecommendationCard />
+                </aside>
+              ) : null}
             </div>
 
             <div className="z-50 rounded-sm w-[50%] md:w-[40%] lg:w-[20%] fixed bottom-1 right-4 flex justify-center items-center">
