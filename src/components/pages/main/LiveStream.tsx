@@ -1,5 +1,5 @@
 import LiveChats from "@/components/specific/liveStream/LiveChats";
-import LiveStreamPlayer from "@/components/specific/liveStream/liveStreamPlayer";
+import LiveStreamPlayer from "@/components/specific/liveStream/LiveStreamPlayer";
 
 const LiveStream = () => {
   return (
