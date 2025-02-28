@@ -28,7 +28,7 @@ const socketEvents = {
 };
 const ICE_SERVERS: RTCConfiguration = {
   iceServers: [
-    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun.l.google.com:19302" }, 
     {
       urls: "turn:119.18.55.92:3478?transport=udp",
       username: "bn_turn",
@@ -40,12 +40,12 @@ const ICE_SERVERS: RTCConfiguration = {
       credential: "bn_2_0",
     },
     {
-      urls: "turn:119.18.55.92:5349?transport=tls",
+      urls: "turn:119.18.55.92:5349", 
       username: "bn_turn",
       credential: "bn_2_0",
     },
   ],
-};
+};;
 
 export {
   server_url,
