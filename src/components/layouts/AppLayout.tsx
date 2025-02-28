@@ -16,7 +16,10 @@ const AppLayout = ({
 }>) => {
   const location = useLocation();
   const isProfilePage = location.pathname.startsWith("/profile");
-  const isLiveStreamPage = location.pathname.startsWith("/live-stream");
+  const isLiveStreamPage =
+    location.pathname.startsWith("/live-stream") ||
+    location.pathname.startsWith("/start-stream");
+
 
   const { data: userData, isLoading } = useQuery({
     queryKey: ["user-data"],
