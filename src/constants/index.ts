@@ -2,6 +2,7 @@ import axios from "axios";
 
 const server_url = import.meta.env.VITE_BACKEND_URL;
 const socket_url = import.meta.env.VITE_SOCKET_URL;
+const stream_server_url = import.meta.env.VITE_STREAM_SERVER_URL;
 const axiosInstance = axios.create({
   baseURL: server_url,
   withCredentials: true,
@@ -22,19 +23,35 @@ const socketEvents = {
   CALL_ACCEPTED: "CALL_ACCEPTED",
   INCOMING_CALL: "INCOMING_CALL",
   CALL_ENDED: "CALL_ENDED",
+  STREAM_VIDEO: "STREAM_VIDEO",
+  END_STREAM: "END_STREAM",
 };
 const ICE_SERVERS: RTCConfiguration = {
   iceServers: [
-    // Free STUN Servers (Google's public STUN)
     { urls: "stun:stun.l.google.com:19302" },
-    { urls: "stun:stun1.l.google.com:19302" },
-    { urls: "stun:stun.voipbuster.com:3478" },
     {
-      urls: "turn:relay1.expressturn.com:3478",
-      username: "ef7S6M6U80AZBN01P9",
-      credential: "VweYZ3NdXyTSUAuT",
+      urls: "turn:119.18.55.92:3478?transport=udp",
+      username: "bn_turn",
+      credential: "bn_2_0",
+    },
+    {
+      urls: "turn:119.18.55.92:3478?transport=tcp",
+      username: "bn_turn",
+      credential: "bn_2_0",
+    },
+    {
+      urls: "turn:119.18.55.92:5349?transport=tls",
+      username: "bn_turn",
+      credential: "bn_2_0",
     },
   ],
 };
 
-export { server_url, axiosInstance, socketEvents, socket_url, ICE_SERVERS };
+export {
+  server_url,
+  axiosInstance,
+  socketEvents,
+  socket_url,
+  ICE_SERVERS,
+  stream_server_url,
+};
