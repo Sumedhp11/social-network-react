@@ -28,13 +28,13 @@ const socketEvents = {
 };
 const ICE_SERVERS: RTCConfiguration = {
   iceServers: [
-    { urls: "stun:119.18.55.92:3478" },
     {
       urls: "turn:119.18.55.92:3478",
       username: "bn_turn",
       credential: "bn_2_0",
     },
   ],
+  iceTransportPolicy: "relay",
 };
 
 export {
