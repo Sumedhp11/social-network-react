@@ -33,17 +33,15 @@ const socketEvents = {
 const ICE_SERVERS: RTCConfiguration = {
   iceServers: [
     {
-      urls: "stun:stun.l.google.com:19302",
-    },
-    {
       urls: [
-        `${turn_server_url}?transport=udp`,
+        // `${turn_server_url}?transport=udp`,
         `${turn_server_url}?transport=tcp`,
       ],
       username: turn_server_username,
       credential: turn_server_password,
     },
   ],
+  iceTransportPolicy: "relay",
 };
 
 export {
