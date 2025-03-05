@@ -34,8 +34,8 @@ const ICE_SERVERS: RTCConfiguration = {
   iceServers: [
     {
       urls: [
-        // `${turn_server_url}?transport=udp`,
-        `${turn_server_url}`,
+        `${turn_server_url}?transport=udp`,
+        `${turn_server_url}?transport=tcp`,
       ],
       username: turn_server_username,
       credential: turn_server_password,
