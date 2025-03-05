@@ -66,11 +66,16 @@ export const setupConnection = ({
 
   pc.onicecandidate = (event) => {
     if (event.candidate) {
-      console.log("ICE Candidate Generated:", event.candidate.candidate);
-      socket?.emit(socketEvents.ICE_CANDIDATE, {
-        recipientId,
-        candidate: event.candidate,
-      });
+      const candidateStr = event.candidate.candidate;
+      if (candidateStr.includes("typ relay")) {
+        console.log("ICE Candidate Generated:", candidateStr);
+        socket?.emit(socketEvents.ICE_CANDIDATE, {
+          recipientId,
+          candidate: event.candidate,
+        });
+      } else {
+        console.warn("Non-relay candidate ignored:", candidateStr);
+      }
     } else {
       console.log("ICE Gathering Complete");
     }
@@ -100,6 +105,15 @@ export const setupConnection = ({
       pc.restartIce();
     }
   };
+
+  socket.on(socketEvents.ICE_CANDIDATE, (data) => {
+    if (data.candidate) {
+      console.log("ICE Candidate Received:", data.candidate);
+      pc.addIceCandidate(new RTCIceCandidate(data.candidate)).catch((err) =>
+        console.error("Error adding candidate:", err)
+      );
+    }
+  });
 
   peerConnectionRef.current = pc;
   console.log("✅ Peer connection setup complete!");
