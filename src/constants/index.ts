@@ -33,7 +33,7 @@ const socketEvents = {
 const ICE_SERVERS: RTCConfiguration = {
   iceServers: [
     {
-      urls: [`${turn_server_url}`],
+      urls: `${turn_server_url}`,
       username: turn_server_username,
       credential: turn_server_password,
     },
