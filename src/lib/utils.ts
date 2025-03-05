@@ -66,24 +66,35 @@ export const setupConnection = ({
 
   pc.onicecandidate = (event) => {
     if (event.candidate) {
+      console.log("ICE Candidate Generated:", event.candidate.candidate);
       socket?.emit(socketEvents.ICE_CANDIDATE, {
         recipientId,
         candidate: event.candidate,
       });
+    } else {
+      console.log("ICE Gathering Complete");
     }
   };
+
+  pc.onicecandidateerror = (event) => {
+    console.error("ICE Candidate Error:", event.errorText, event);
+  };
+
   pc.ontrack = (event) => {
     if (event.streams && event.streams.length > 0) {
       console.log("🎥 Remote stream received:", event.streams[0]);
-
-      // ✅ Update state instead of ref
       setRemoteStream(new MediaStream(event.streams[0].getTracks()));
     } else {
       console.warn("⚠️ No remote stream found in event.");
     }
   };
 
+  pc.onconnectionstatechange = () => {
+    console.log("Connection State:", pc.connectionState);
+  };
+
   pc.oniceconnectionstatechange = () => {
+    console.log("ICE Connection State:", pc.iceConnectionState);
     if (pc.iceConnectionState === "failed") {
       console.error("❌ ICE Connection Failed! Retrying...");
       pc.restartIce();
