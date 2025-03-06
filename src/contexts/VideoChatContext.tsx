@@ -205,7 +205,6 @@ export const VideoChatProvider: React.FC<{ children: React.ReactNode }> = ({
     const pc = peerConnectionRef.current;
     if (!pc) return;
     await pc.addIceCandidate(new RTCIceCandidate(candidate));
-    console.log(pc, 193);
   };
 
   /** ✅ Event Handlers */
