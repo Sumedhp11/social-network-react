@@ -66,16 +66,11 @@ export const setupConnection = ({
 
   pc.onicecandidate = (event) => {
     if (event.candidate) {
-      const candidateStr = event.candidate.candidate;
-      if (candidateStr.includes("typ relay")) {
-        console.log("ICE Candidate Generated:", candidateStr);
-        socket?.emit(socketEvents.ICE_CANDIDATE, {
-          recipientId,
-          candidate: event.candidate,
-        });
-      } else {
-        console.warn("Non-relay candidate ignored:", candidateStr);
-      }
+      console.log("ICE Candidate Generated:", event.candidate.candidate);
+      socket?.emit(socketEvents.ICE_CANDIDATE, {
+        recipientId,
+        candidate: event.candidate,
+      });
     } else {
       console.log("ICE Gathering Complete");
     }
