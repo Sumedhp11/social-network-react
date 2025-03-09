@@ -121,13 +121,16 @@ export const VideoChatProvider: React.FC<{ children: React.ReactNode }> = ({
     localStream?.getTracks().forEach((track) => track.stop());
     remoteStream?.getTracks().forEach((track) => track.stop());
 
-
+    setLocalStream(null);
+    setRemoteStream(null);
     setIsInCall(false);
     setOpenDialog(false);
     setOpenDrawer(false);
     setRecipientId(null);
     setRecipentUserDetails(null);
-    toast("Call Ended");
+    console.log("worked");
+
+    toast.success("Call Ended");
   };
 
   /** ✅ Handle incoming call */
