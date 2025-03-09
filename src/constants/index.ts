@@ -34,16 +34,22 @@ const ICE_SERVERS: RTCConfiguration = {
   iceServers: [
     { urls: `stun:${turn_server_url}` },
     {
-      urls: `turn:${turn_server_url}`,
+      urls: `turn:${turn_server_url}?transport=udp`,
+      username: turn_server_username,
+      credential: turn_server_password,
+    },
+    {
+      urls: `turn:${turn_server_url}?transport=tcp`,
       username: turn_server_username,
       credential: turn_server_password,
     },
   ],
-  iceTransportPolicy: "relay",
+  iceTransportPolicy: "all",
   bundlePolicy: "balanced" as RTCBundlePolicy,
   rtcpMuxPolicy: "require",
   iceCandidatePoolSize: 0,
 };
+
 
 
 export {
