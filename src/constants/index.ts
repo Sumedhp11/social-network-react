@@ -30,7 +30,7 @@ const socketEvents = {
   STREAM_VIDEO: "STREAM_VIDEO",
   END_STREAM: "END_STREAM",
 };
-const ICE_SERVERS = {
+const ICE_SERVERS: RTCConfiguration = {
   iceServers: [
     { urls: `stun:${turn_server_url}` },
     {
@@ -40,10 +40,11 @@ const ICE_SERVERS = {
     },
   ],
   iceTransportPolicy: "all",
-  bundlePolicy: "balanced",
+  bundlePolicy: "balanced" as RTCBundlePolicy,
   rtcpMuxPolicy: "require",
   iceCandidatePoolSize: 0,
 };
+
 
 export {
   server_url,
