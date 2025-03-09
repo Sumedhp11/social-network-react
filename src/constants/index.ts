@@ -44,7 +44,7 @@ const ICE_SERVERS: RTCConfiguration = {
       credential: turn_server_password,
     },
   ],
-  iceTransportPolicy: "all",
+  iceTransportPolicy: "relay",
   bundlePolicy: "balanced" as RTCBundlePolicy,
   rtcpMuxPolicy: "require",
   iceCandidatePoolSize: 0,
