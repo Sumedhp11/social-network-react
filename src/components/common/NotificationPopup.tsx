@@ -67,16 +67,16 @@ const NotificationPopup = () => {
             )}
           </div>
         </PopoverTrigger>
-        <PopoverContent className="w-[350px] mr-4 mt-4 p-4">
+        <PopoverContent className="w-[350px] max-w-[90vw] max-h-[350px] mr-4 mt-4 p-4 overflow-y-auto rounded-lg bg-white shadow-lg">
           {isLoading ? (
             <Loader />
           ) : notifications && notifications.length > 0 ? (
             notifications.map((n: Notification, index: number) => (
               <div
                 key={n.id}
-                className={`w-full grid grid-cols-12 gap-2 py-3 ${
+                className={`w-full grid grid-cols-12 gap-3 py-2.5 ${
                   index !== notifications.length - 1
-                    ? "border-b border-gray-300"
+                    ? "border-b border-gray-200"
                     : ""
                 }`}
               >
@@ -87,7 +87,7 @@ const NotificationPopup = () => {
                       : "col-span-12"
                   } flex items-center gap-3`}
                 >
-                  <Avatar>
+                  <Avatar className="w-10 h-10">
                     <AvatarImage
                       src={
                         n.sender.avatarUrl || "https://github.com/shadcn.png"
@@ -95,38 +95,46 @@ const NotificationPopup = () => {
                       alt={n.sender.username}
                     />
                   </Avatar>
-                  <div className="w-[70%] flex flex-col gap-1">
-                    <p className="text-sm font-medium">{n.sender.username}</p>
-                    <p className="text-xs font-medium text-black text-ellipsis overflow-hidden">
+                  <div className="flex-1 flex flex-col gap-0.5">
+                    <p className="text-sm font-medium text-gray-900">
+                      {n.sender.username}
+                    </p>
+                    <p className="text-xs font-normal text-gray-700 whitespace-nowrap text-ellipsis overflow-hidden">
                       {n.notificationType === "FRIEND_REQUEST_RECEIVED"
                         ? `Sent you a Friend Request`
                         : n.message}
                     </p>
-                    <p className="text-gray-500 text-xs font-medium">
+                    <p className="text-xs font-normal text-gray-500">
                       {moment(n.createdAt).fromNow()}
                     </p>
                   </div>
                 </div>
                 {n.notificationType === "FRIEND_REQUEST_RECEIVED" && (
                   <div className="col-span-4 flex justify-end items-center gap-2">
-                    <Check
-                      className="rounded-full w-8 h-8 p-1 cursor-pointer bg-green-100 text-green-500"
+                    <button
+                      className="rounded-full w-8 h-8 p-1.5 flex items-center justify-center bg-green-100 text-green-500 hover:bg-green-200 transition-colors"
                       onClick={() =>
                         handleFriendRequestClick(n.friendship.id, "Accept")
                       }
-                    />
-                    <X
-                      className="rounded-full w-8 h-8 p-1 cursor-pointer bg-red-100 text-red-500"
+                    >
+                      <Check className="w-5 h-5" />
+                    </button>
+                    <button
+                      className="rounded-full w-8 h-8 p-1.5 flex items-center justify-center bg-red-100 text-red-500 hover:bg-red-200 transition-colors"
                       onClick={() =>
                         handleFriendRequestClick(n.friendship.id, "Decline")
                       }
-                    />
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
                   </div>
                 )}
               </div>
             ))
           ) : (
-            <p className="text-center text-gray-500">No notifications</p>
+            <p className="text-center text-gray-600 text-sm">
+              No notifications
+            </p>
           )}
         </PopoverContent>
       </Popover>

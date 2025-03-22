@@ -9,7 +9,6 @@ import { Button } from "../../ui/button";
 import { Card, CardContent } from "../../ui/card";
 import { Input } from "../../ui/input";
 import MediaViewer from "../../ui/MediaView";
-// import { Link } from "react-router";
 
 const AddPostCard = ({ user }: { user: userInterface }) => {
   const queryClient = useQueryClient();
@@ -139,17 +138,7 @@ const AddPostCard = ({ user }: { user: userInterface }) => {
               onChange={handleImageChange}
               className="hidden"
             />
-            {/* <Link
-              to={"/start-stream"}
-              className="cursor-pointer rounded-3xl border border-[#2B3A45] w-28 flex justify-center items-center gap-3 py-2"
-            >
-              <MonitorPlay
-                size={25}
-                className="text-red-600"
-                strokeWidth={2.4}
-              />
-              <p className="text-sm text-white">Live</p>
-            </Link> */}
+
           </div>
         )}
       </CardContent>

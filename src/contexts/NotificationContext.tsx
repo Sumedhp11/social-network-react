@@ -39,14 +39,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
           withCredentials: true,
         });
 
-
         eventSource.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
             if (data.message === "Connection established") return;
 
             setHasUnread(true);
-
             toast.success(data.message, {
               position: "bottom-right",
               duration: 5000,

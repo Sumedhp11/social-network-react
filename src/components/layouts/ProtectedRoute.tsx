@@ -2,7 +2,7 @@ import { validateAccessToken } from "@/APIs/authAPIs";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import Loader from "../ui/Loader";
+import SocialLoader from "../ui/InitialLoader";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     mutate();
   }, [mutate]);
   if (isPending) {
-    return <Loader />;
+    return <SocialLoader />;
   }
 
   return <>{children}</>;

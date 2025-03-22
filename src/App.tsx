@@ -2,10 +2,7 @@ import AuthLayout from "@/components/layouts/AuthLayout";
 import { lazy, Suspense } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router";
 import ProtectedRoute from "./components/layouts/ProtectedRoute";
-import Loader from "./components/ui/Loader";
-// import { StremSocketProvider } from "./contexts/LiveStreamSocketContext";
-// import StreamLayout from "./components/layouts/StreamLayout";
-// import StartStream from "./components/pages/StartStream";
+import { SocialLoader } from "./components/ui/InitialLoader";
 
 const Login = lazy(() => import("@/components/pages/auth/Login"));
 const ResetPassword = lazy(
@@ -20,12 +17,11 @@ const Verify = lazy(() => import("@/components/pages/auth/Verify"));
 const AppLayout = lazy(() => import("@/components/layouts/AppLayout"));
 const Home = lazy(() => import("@/components/pages/main/Home"));
 const UserProfile = lazy(() => import("@/components/pages/main/UserProfile"));
-// const StartStream = lazy(() => import("@/components/pages/StartStream"));
 
 const App = () => {
   return (
     <Router>
-      <Suspense fallback={<Loader />}>
+      <Suspense fallback={<SocialLoader />}>
         <ProtectedRoute>
           <Routes>
             <Route path="/reset-password" element={<ResetPassword />} />
@@ -50,19 +46,6 @@ const App = () => {
               index
               element={<AppLayout component={<Home />} />}
             />
-            {/* <Route
-              path="/start-stream"
-              index
-              element={
-                <AppLayout
-                  component={
-                    <StremSocketProvider>
-                      <StreamLayout />
-                    </StremSocketProvider>
-                  }
-                />
-              }
-            /> */}
             <Route
               path="/profile/:userId"
               element={<AppLayout component={<UserProfile />} />}
