@@ -1,7 +1,7 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useVideoChat } from "@/contexts/VideoChatContext";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ReactPlayer from "react-player";
 
 const VideoChatComponent = () => {
@@ -13,26 +13,6 @@ const VideoChatComponent = () => {
   const mainLabel = isRemoteMain ? "Remote" : "You";
   const pipLabel = isRemoteMain ? "You" : "Remote";
 
-  // Prevent fullscreen on mobile
-  useEffect(() => {
-    const preventFullscreen = (e: Event) => {
-      e.preventDefault();
-    };
-
-    // Add event listeners to block fullscreen requests
-    document.addEventListener("fullscreenchange", preventFullscreen);
-    document.addEventListener("webkitfullscreenchange", preventFullscreen);
-    document.addEventListener("mozfullscreenchange", preventFullscreen);
-    document.addEventListener("MSFullscreenChange", preventFullscreen);
-
-    return () => {
-      document.removeEventListener("fullscreenchange", preventFullscreen);
-      document.removeEventListener("webkitfullscreenchange", preventFullscreen);
-      document.removeEventListener("mozfullscreenchange", preventFullscreen);
-      document.removeEventListener("MSFullscreenChange", preventFullscreen);
-    };
-  }, []);
-
   return (
     <div
       className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-xl overflow-hidden"
@@ -42,15 +22,29 @@ const VideoChatComponent = () => {
       <div className="relative flex-1 p-4">
         <div className="w-full h-full rounded-xl overflow-hidden shadow-lg bg-gray-200 border border-gray-300">
           {mainStream ? (
-            <ReactPlayer
-              url={mainStream}
-              playing
-              muted={mainLabel === "You"}
-              width="100%"
-              height="100%"
-              className="object-cover"
-              playsinline:false
-            />
+            <div className="w-full h-full pointer-events-none">
+              {/* Wrap player in a div to avoid fullscreen issues */}
+              <ReactPlayer
+                url={mainStream}
+                playing
+                muted={mainLabel === "You"}
+                width="100%"
+                height="100%"
+                className="object-cover"
+                playsinline
+                controls={false}
+                config={{
+                  file: {
+                    attributes: {
+                      playsinline: true,
+                      webkitPlaysinline: true,
+                      controlsList: "nofullscreen nodownload noplaybackrate",
+                    },
+                  },
+                }}
+                style={{ pointerEvents: "none" }}
+              />
+            </div>
           ) : (
             <div className="flex items-center justify-center h-full text-gray-600 text-base font-medium">
               <Avatar className="w-20 h-20 ring-2 ring-gray-300">
@@ -67,12 +61,12 @@ const VideoChatComponent = () => {
           </span>
         </div>
 
-        {pipStream || (!pipStream && mainStream) ? (
+        {pipStream && (
           <div
             className="cursor-pointer absolute bottom-7 right-4 w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-200 transition-all duration-300 hover:scale-110"
             onClick={() => setIsRemoteMain((prev) => !prev)}
           >
-            {pipStream ? (
+            <div className="w-full h-full pointer-events-none">
               <ReactPlayer
                 url={pipStream}
                 playing
@@ -80,29 +74,29 @@ const VideoChatComponent = () => {
                 width="100%"
                 height="100%"
                 className="object-cover"
-                playsinline:false
+                playsinline
+                controls={false}
+                config={{
+                  file: {
+                    attributes: {
+                      playsinline: true,
+                      webkitPlaysinline: true,
+                      controlsList: "nofullscreen nodownload noplaybackrate",
+                    },
+                  },
+                }}
+                style={{ pointerEvents: "none" }}
               />
-            ) : (
-              <div className="flex items-center justify-center w-full h-full">
-                <Avatar className="w-20 h-20 ring-2 ring-gray-300">
-                  <AvatarImage
-                    src="https://avatars.githubusercontent.com/u/124599?v=4"
-                    alt={`${pipLabel} Avatar`}
-                    className="object-cover"
-                  />
-                </Avatar>
-              </div>
-            )}
+            </div>
             <span className="absolute bottom-1 right-7 px-2 py-0.5 text-xs font-medium text-white bg-black/70 rounded-full backdrop-blur-sm">
               {pipLabel}
             </span>
           </div>
-        ) : null}
+        )}
       </div>
 
       {isInCall && (
         <div className="p-4 bg-white/80 backdrop-blur-md border-t border-gray-200 flex items-center justify-center gap-6">
-          <div className="flex items-center gap-2"></div>
           <Button
             onClick={endCall}
             className="px-6 py-2 rounded-lg font-semibold shadow-md bg-red-600 hover:bg-red-700 transition-all duration-200 text-white"
