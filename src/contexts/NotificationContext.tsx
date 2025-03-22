@@ -46,7 +46,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
 
             setHasUnread(true);
             toast.success(data.message, {
-              position: "bottom-right",
+              position: "top-right",
               duration: 5000,
             });
 
