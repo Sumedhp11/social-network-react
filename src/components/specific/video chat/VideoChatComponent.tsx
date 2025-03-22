@@ -1,7 +1,7 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useVideoChat } from "@/contexts/VideoChatContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactPlayer from "react-player";
 
 const VideoChatComponent = () => {
@@ -13,8 +13,31 @@ const VideoChatComponent = () => {
   const mainLabel = isRemoteMain ? "Remote" : "You";
   const pipLabel = isRemoteMain ? "You" : "Remote";
 
+  // Prevent fullscreen on mobile
+  useEffect(() => {
+    const preventFullscreen = (e: Event) => {
+      e.preventDefault();
+    };
+
+    // Add event listeners to block fullscreen requests
+    document.addEventListener("fullscreenchange", preventFullscreen);
+    document.addEventListener("webkitfullscreenchange", preventFullscreen);
+    document.addEventListener("mozfullscreenchange", preventFullscreen);
+    document.addEventListener("MSFullscreenChange", preventFullscreen);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", preventFullscreen);
+      document.removeEventListener("webkitfullscreenchange", preventFullscreen);
+      document.removeEventListener("mozfullscreenchange", preventFullscreen);
+      document.removeEventListener("MSFullscreenChange", preventFullscreen);
+    };
+  }, []);
+
   return (
-    <div className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-xl overflow-hidden">
+    <div
+      className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-xl overflow-hidden"
+      style={{ maxHeight: "100vh" }} // Ensure it respects container bounds
+    >
       {/* Main Video Section */}
       <div className="relative flex-1 p-4">
         <div className="w-full h-full rounded-xl overflow-hidden shadow-lg bg-gray-200 border border-gray-300">
@@ -26,6 +49,7 @@ const VideoChatComponent = () => {
               width="100%"
               height="100%"
               className="object-cover"
+              playsinline:false
             />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-600 text-base font-medium">
@@ -56,6 +80,7 @@ const VideoChatComponent = () => {
                 width="100%"
                 height="100%"
                 className="object-cover"
+                playsinline:false
               />
             ) : (
               <div className="flex items-center justify-center w-full h-full">
