@@ -157,7 +157,7 @@ const ChatDrawer = () => {
         </Drawer>
       )}
       {openDialog ? (
-        <Dialog onOpenChange={setOpenDialog} open={openDialog}>
+        <Dialog onOpenChange={setOpenDialog} open={true}>
           <DialogContent className="md:w-[50%] md:h-[65%] bg-white border ">
             <DialogTitle className="hidden"></DialogTitle>
             <div className="w-full h-full py-3 grid grid-rows-8 space-y-4">

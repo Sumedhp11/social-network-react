@@ -37,51 +37,60 @@ const Chat = ({
     });
 
   const markMessagesAsSeen = useCallback(() => {
-    const unseenMessages =
-      data?.pages.flatMap((page) =>
-        page.data.filter(
-          (message) =>
-            !message.seen_at && Number(message.senderId) !== Number(userId)
-        )
-      ) || [];
+    if (!data?.pages || !userId) return;
 
-    if (unseenMessages.length > 0) {
-      socket.emit(socketEvents.MESSAGE_SEEN, {
-        chatId: selectedUser.chat.id,
-        messageIds: unseenMessages.map((msg) => msg?._id),
-        seen_at: new Date(),
-      });
-
-      queryClient.setQueryData<InfiniteData<MessagesPage>>(
-        ["messages", selectedUser.chat.id],
-        (oldData) => {
-          if (!oldData) return;
-
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              data: page.data.map((msg) =>
-                unseenMessages.some((unseenMsg) => unseenMsg._id === msg._id)
-                  ? { ...msg, seen_at: new Date() }
-                  : msg
-              ),
-            })),
-          };
-        }
+    const unseenMessages = data.pages
+      .flatMap((page) => page.data)
+      .filter(
+        (message) =>
+          !message.seen_at && Number(message.senderId) !== Number(userId)
       );
-    }
+
+    if (unseenMessages.length === 0) return;
+
+    const messageIds = unseenMessages.map((msg) => msg?._id);
+
+    socket.emit(socketEvents.MESSAGE_SEEN, {
+      chatId: selectedUser.chat.id,
+      messageIds,
+      seen_at: new Date(),
+    });
+
+    queryClient.setQueryData<InfiniteData<MessagesPage>>(
+      ["messages", selectedUser.chat.id],
+      (oldData) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            data: page.data.map((msg) =>
+              messageIds.includes(msg._id) && !msg.seen_at
+                ? { ...msg, seen_at: new Date() }
+                : msg
+            ),
+          })),
+        };
+      }
+    );
   }, [data, selectedUser.chat.id, queryClient, socket, userId]);
 
   const newMessagesListener = useCallback(
     (data: { chatId: string; messageForRealTime: messageInterface }) => {
-      if (!userId) return;
-      if (Number(data.chatId) !== Number(selectedUser.chat.id)) return;
+      if (!userId || Number(data.chatId) !== Number(selectedUser.chat.id))
+        return;
 
       queryClient.setQueryData<InfiniteData<MessagesPage>>(
         ["messages", selectedUser.chat.id],
         (oldData) => {
-          if (!oldData) return;
+          if (!oldData) return oldData;
+
+          const messageExists = oldData.pages
+            .flatMap((page) => page.data)
+            .some((msg) => msg._id === data.messageForRealTime._id);
+
+          if (messageExists) return oldData;
 
           return {
             ...oldData,
@@ -100,57 +109,26 @@ const Chat = ({
           messageIds: [data.messageForRealTime?._id],
           seen_at: new Date(),
         });
-
-        queryClient.setQueryData<InfiniteData<MessagesPage>>(
-          ["messages", selectedUser.chat.id],
-          (oldData) => {
-            if (!oldData) return;
-
-            return {
-              ...oldData,
-              pages: oldData.pages.map((page) => ({
-                ...page,
-                data: page.data.map((msg) =>
-                  msg._id === data.messageForRealTime._id
-                    ? { ...msg, seen_at: new Date() }
-                    : msg
-                ),
-              })),
-            };
-          }
-        );
       }
     },
     [selectedUser.chat.id, queryClient, socket, userId]
   );
 
-  useEffect(() => {
-    if (selectedUser.chat.id) {
-      markMessagesAsSeen();
-      setNewMessagesAlert([]);
-    }
-  }, [selectedUser.chat.id, markMessagesAsSeen, setNewMessagesAlert]);
-
   const MessageListener = useCallback(
     (data: { chatId: number; messageId: string; seen_at: Date }) => {
-      if (
-        Number(data.chatId) !== Number(selectedUser.chat.id) ||
-        selectedUser.friendId === userId
-      ) {
-        return;
-      }
+      if (Number(data.chatId) !== Number(selectedUser.chat.id)) return;
 
       queryClient.setQueryData<InfiniteData<MessagesPage>>(
         ["messages", selectedUser.chat.id],
         (oldData) => {
-          if (!oldData) return;
+          if (!oldData) return oldData;
 
           return {
             ...oldData,
             pages: oldData.pages.map((page) => ({
               ...page,
               data: page.data.map((msg) =>
-                msg._id === data.messageId
+                msg._id === data.messageId && !msg.seen_at
                   ? { ...msg, seen_at: data.seen_at }
                   : msg
               ),
@@ -159,7 +137,7 @@ const Chat = ({
         }
       );
     },
-    [selectedUser.chat.id, queryClient, selectedUser.friendId, userId]
+    [selectedUser.chat.id, queryClient]
   );
 
   const handleStartTyping = useCallback(
@@ -181,6 +159,18 @@ const Chat = ({
     },
     [selectedUser.chat.id]
   );
+
+  useEffect(() => {
+    if (selectedUser.chat.id && data?.pages) {
+      markMessagesAsSeen();
+      setNewMessagesAlert([]);
+    }
+  }, [
+    selectedUser.chat.id,
+    data?.pages,
+    markMessagesAsSeen,
+    setNewMessagesAlert,
+  ]);
 
   const eventHandler = {
     [socketEvents.NEW_MESSAGE]: newMessagesListener,

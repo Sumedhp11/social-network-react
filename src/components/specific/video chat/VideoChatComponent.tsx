@@ -1,67 +1,90 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { useVideoChat } from "@/contexts/VideoChatContext";
+import { useState } from "react";
 import ReactPlayer from "react-player";
 
 const VideoChatComponent = () => {
   const { isInCall, localStream, remoteStream, endCall } = useVideoChat();
+  const [isRemoteMain, setIsRemoteMain] = useState(true);
+
+  const mainStream = isRemoteMain ? remoteStream : localStream;
+  const pipStream = isRemoteMain ? localStream : remoteStream;
+  const mainLabel = isRemoteMain ? "Remote" : "You";
+  const pipLabel = isRemoteMain ? "You" : "Remote";
 
   return (
-    <div className="w-full h-full p-4 flex flex-col items-center bg-gray-100 rounded-lg shadow-lg">
-      <div className="flex gap-4 w-full h-full">
-        {/* Local Video */}
-        <div className="w-1/2 h-full border border-gray-300 rounded-lg overflow-hidden relative shadow-md">
-          {localStream ? (
+    <div className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-xl overflow-hidden">
+      {/* Main Video Section */}
+      <div className="relative flex-1 p-4">
+        <div className="w-full h-full rounded-xl overflow-hidden shadow-lg bg-gray-200 border border-gray-300">
+          {mainStream ? (
             <ReactPlayer
-              url={localStream}
+              url={mainStream}
               playing
-              muted
+              muted={mainLabel === "You"}
               width="100%"
               height="100%"
+              className="object-cover"
             />
           ) : (
-            <div className="flex items-center justify-center w-full h-full text-center text-gray-500">
-              No Local Stream
-            </div>
-          )}
-          <span className="absolute top-2 left-2 px-2 py-1 text-xs bg-gray-800 text-white rounded">
-            You
-          </span>
-        </div>
-
-        {/* Remote Video */}
-        <div className="w-1/2 h-full border border-gray-300 rounded-lg overflow-hidden relative shadow-md">
-          {remoteStream ? (
-            <ReactPlayer
-              url={remoteStream}
-              playing
-              width="100%"
-              height="100%"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Avatar className="w-14 h-14 ring-1">
+            <div className="flex items-center justify-center h-full text-gray-600 text-base font-medium">
+              <Avatar className="w-20 h-20 ring-2 ring-gray-300">
                 <AvatarImage
-                  src={"https://avatars.githubusercontent.com/u/124599?v=4"}
-                  alt="User Avatar"
+                  src="https://avatars.githubusercontent.com/u/124599?v=4"
+                  alt={`${pipLabel} Avatar`}
                   className="object-cover"
                 />
               </Avatar>
             </div>
           )}
-          <span className="absolute top-2 left-2 px-2 py-1 text-xs bg-gray-800 text-white rounded">
-            Remote
+          <span className="absolute top-4 left-4 px-3 py-1 text-sm font-medium text-white bg-gray-500 rounded-full backdrop-blur-sm">
+            {mainLabel}
           </span>
         </div>
+
+        {pipStream || (!pipStream && mainStream) ? (
+          <div
+            className="cursor-pointer absolute bottom-7 right-4 w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-200 transition-all duration-300 hover:scale-110"
+            onClick={() => setIsRemoteMain((prev) => !prev)}
+          >
+            {pipStream ? (
+              <ReactPlayer
+                url={pipStream}
+                playing
+                muted={pipLabel === "You"}
+                width="100%"
+                height="100%"
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex items-center justify-center w-full h-full">
+                <Avatar className="w-20 h-20 ring-2 ring-gray-300">
+                  <AvatarImage
+                    src="https://avatars.githubusercontent.com/u/124599?v=4"
+                    alt={`${pipLabel} Avatar`}
+                    className="object-cover"
+                  />
+                </Avatar>
+              </div>
+            )}
+            <span className="absolute bottom-1 right-7 px-2 py-0.5 text-xs font-medium text-white bg-black/70 rounded-full backdrop-blur-sm">
+              {pipLabel}
+            </span>
+          </div>
+        ) : null}
       </div>
 
-      {/* Hang Up Button */}
       {isInCall && (
-        <button
-          onClick={endCall}
-          className="px-4 py-2 mt-4 text-white bg-red-600 rounded-lg shadow hover:bg-red-700 transition duration-200"
-        >
-          Hang Up
-        </button>
+        <div className="p-4 bg-white/80 backdrop-blur-md border-t border-gray-200 flex items-center justify-center gap-6">
+          <div className="flex items-center gap-2"></div>
+          <Button
+            onClick={endCall}
+            className="px-6 py-2 rounded-lg font-semibold shadow-md bg-red-600 hover:bg-red-700 transition-all duration-200 text-white"
+          >
+            End Call
+          </Button>
+        </div>
       )}
     </div>
   );
