@@ -28,6 +28,7 @@ import { Input } from "../ui/input";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [googleLoading, setGoogleLoading] = useState<boolean>(false);
   const [, setUserId] = useUserId("userId", 0);
   const navigate = useNavigate();
 
@@ -54,13 +55,23 @@ const LoginForm = () => {
     isPending,
   } = useMutation({
     mutationFn: loginWithGoogleAPI,
+    onMutate: () => {
+      setGoogleLoading(true);
+      toast.loading("Logging in with Google...");
+    },
     onSuccess: (data) => {
+      toast.dismiss();
       toast.success(data?.message);
       setUserId(data.data.userId as number);
       navigate("/");
     },
     onError: (error) => {
+      toast.dismiss();
       console.error("Google Login API failed:", error);
+      toast.error("Google login failed. Please try again.");
+    },
+    onSettled: () => {
+      setGoogleLoading(false);
     },
   });
 
@@ -152,19 +163,28 @@ const LoginForm = () => {
           </div>
         </form>
       </Form>
-      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_ID!}>
-        <GoogleLogin
-          text="continue_with"
-          onSuccess={handleGoogleLogin}
-          onError={() => console.error("Google login failed")}
-          type="standard"
-          theme="outline"
-          size="large"
-          shape="rectangular"
-          logo_alignment="center"
-          context="signin"
-        />
-      </GoogleOAuthProvider>
+      {!googleLoading ? (
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_ID!}>
+          <GoogleLogin
+            text="continue_with"
+            onSuccess={handleGoogleLogin}
+            onError={() => {
+              console.error("Google login failed");
+              toast.error("Google login failed. Please try again.");
+            }}
+            type="standard"
+            theme="outline"
+            size="large"
+            shape="rectangular"
+            logo_alignment="center"
+            context="signin"
+          />
+        </GoogleOAuthProvider>
+      ) : (
+        <div className="flex justify-center items-center">
+          <p className="text-white text-sm">Logging in with Google...</p>
+        </div>
+      )}
       {isError && (
         <p className="text-red-500 text-sm font-normal text-center mt-2">
           Google login failed. Please try again.
