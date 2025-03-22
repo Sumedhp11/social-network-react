@@ -16,15 +16,14 @@ const VideoChatComponent = () => {
   return (
     <div
       className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-xl overflow-hidden"
-      style={{ maxHeight: "100vh" }} // Ensure it respects container bounds
+      style={{ maxHeight: "100vh" }}
     >
-      {/* Main Video Section */}
       <div className="relative flex-1 p-4">
         <div className="w-full h-full rounded-xl overflow-hidden shadow-lg bg-gray-200 border border-gray-300">
           {mainStream ? (
             <div className="w-full h-full pointer-events-none">
-              {/* Wrap player in a div to avoid fullscreen issues */}
               <ReactPlayer
+                key={`main-${isRemoteMain}`}
                 url={mainStream}
                 playing
                 muted={mainLabel === "You"}
@@ -68,6 +67,7 @@ const VideoChatComponent = () => {
           >
             <div className="w-full h-full pointer-events-none">
               <ReactPlayer
+                key={`pip-${isRemoteMain}`}
                 url={pipStream}
                 playing
                 muted={pipLabel === "You"}

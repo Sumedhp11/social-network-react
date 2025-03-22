@@ -22,7 +22,7 @@ export function SocialLoader() {
         setMessage(updateMessage(nextProgress));
         return nextProgress;
       });
-    }, 100);
+    }, 350); 
 
     return () => clearInterval(interval);
   }, []);
