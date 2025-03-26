@@ -1,7 +1,6 @@
 import { addCommentAPI, likePostAPI } from "@/APIs/postAPIs";
-import Loader from "@/components/ui/Loader";
 import MediaViewer from "@/components/ui/MediaView";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -12,23 +11,38 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import useUserId from "@/hooks";
 import { PostData } from "@/types/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Heart, MessageSquare } from "lucide-react";
 import moment from "moment";
 import { useState } from "react";
 import { Link } from "react-router";
+import toast from "react-hot-toast";
 
 const PostCard = ({ post }: { post: PostData }) => {
   const [comment, setComment] = useState<string>("");
+  const [userId] = useUserId("userId", 0);
+  const [likesCount, setLikesCount] = useState<number>(post.likes.length); // Explicitly typed as number
+  const [isLiked, setIsLiked] = useState(
+    post.likes.some((like) => like.user_id === userId)
+  );
 
   const queryClient = useQueryClient();
-  const { mutate: likeMutation, isPending } = useMutation({
+
+  const { mutate: likeMutation } = useMutation({
     mutationFn: likePostAPI,
+    onMutate: () => {
+      setLikesCount((prev) => prev + (isLiked ? -1 : 1));
+      setIsLiked((prev) => !prev);
+    },
+    onError: () => {
+      setLikesCount(post.likes.length);
+      setIsLiked(post.likes.some((like) => like.user_id === userId));
+      toast.error("Failed to like the post");
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["posts"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 
@@ -36,19 +50,27 @@ const PostCard = ({ post }: { post: PostData }) => {
     mutationFn: addCommentAPI,
     onSuccess: () => {
       setComment("");
-      queryClient.invalidateQueries({
-        queryKey: ["posts"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 
-  function Likehandler() {
+  function LikeHandler() {
     likeMutation(post.id);
   }
 
   function CommentHandler() {
+    if (!comment.trim()) return;
     commentMutation({ post_id: post.id, comment });
   }
+
+  const getInitials = (username?: string) => {
+    if (!username) return "U";
+    const initials = username
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase())
+      .join("");
+    return initials.slice(0, 2);
+  };
 
   return (
     <div className="w-full rounded-xl pt-3 bg-cardGray border-none h-fit my-5">
@@ -57,15 +79,15 @@ const PostCard = ({ post }: { post: PostData }) => {
           {post.user ? (
             <Link to={`/profile/${post.user.id}`}>
               <div className="flex gap-3 items-center">
-                <Avatar className="w-12 h-12">
+                <Avatar className="w-10 h-10 bg-[#28343E]">
                   <AvatarImage
-                    src={
-                      post.user.avatarUrl
-                        ? post.user.avatarUrl
-                        : "https://github.com/shadcn.png"
-                    }
-                    alt="User Avatar"
+                    src={post.user.avatarUrl || "https://github.com/shadcn.png"}
+                    alt={`${post.user.username}'s Avatar`}
+                    className="object-cover"
                   />
+                  <AvatarFallback className="bg-[#28343E] text-white flex items-center justify-center text-md font-semibold">
+                    {getInitials(post.user.username)}
+                  </AvatarFallback>
                 </Avatar>
                 <h1 className="text-base text-white font-normal">
                   {post.user.username}
@@ -85,22 +107,18 @@ const PostCard = ({ post }: { post: PostData }) => {
             {post?.content && <MediaViewer postImage={post?.content} />}
 
             <div className="w-full flex items-center gap-3">
-              {/* Like button */}
               <div
-                className="w-28 rounded-xl bg-[#2B3A45] flex items-center gap-2 justify-center cursor-pointer py-3"
-                onClick={Likehandler}
+                className={`w-28 rounded-xl bg-[#2B3A45] flex items-center justify-center gap-2 py-3 cursor-pointer transition-colors ${
+                  isLiked ? "text-red-500" : "text-white"
+                } hover:bg-[#2F3D4A]`}
+                onClick={LikeHandler}
               >
                 <Heart
                   size={20}
-                  className="text-white hover:scale-125 transform ease-out duration-300"
+                  fill={isLiked ? "currentColor" : "none"}
+                  className="transition-transform duration-200 hover:scale-110"
                 />
-                {isPending ? (
-                  <Loader />
-                ) : (
-                  <p className="text-sm font-medium text-white">
-                    ({post.likes.length})
-                  </p>
-                )}
+                <p className="text-sm font-medium">{likesCount}</p>
               </div>
 
               {/* Comment Popover */}

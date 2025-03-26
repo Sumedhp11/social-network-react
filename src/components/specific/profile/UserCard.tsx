@@ -19,11 +19,13 @@ import { Ellipsis, KeyRound, UserPen } from "lucide-react";
 import { useState } from "react";
 import EditProfileForm from "../../forms/EditProfileForm";
 import ChangePasswordForm from "@/components/forms/ChangePasswordForm";
+import useUserId from "@/hooks";
 
 const UserCard = ({ userId }: { userId: number }) => {
   const [openPopup, setOpenPopup] = useState(false);
   const [openEditProfileDialog, setOpenEditProfileDialog] = useState(false);
   const [openResetPasswordDialog, setOpenResetPasswordDialog] = useState(false);
+  const [user_id] = useUserId("userId", 0);
 
   const { data: userData, isLoading } = useQuery({
     queryKey: ["user-data", userId],
@@ -76,7 +78,9 @@ const UserCard = ({ userId }: { userId: number }) => {
       <div className="absolute right-1 top-1">
         <Popover open={openPopup} onOpenChange={setOpenPopup}>
           <PopoverTrigger>
-            <Ellipsis size={27} className="text-white" />
+            {user_id === userId ? (
+              <Ellipsis size={27} className="text-white" />
+            ) : null}
           </PopoverTrigger>
           <PopoverContent className="flex flex-col w-fit p-2">
             <Dialog
