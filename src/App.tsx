@@ -1,5 +1,5 @@
 import AuthLayout from "@/components/layouts/AuthLayout";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router";
 import ProtectedRoute from "./components/layouts/ProtectedRoute";
 import { SocialLoader } from "./components/ui/InitialLoader";
@@ -19,6 +19,13 @@ const Home = lazy(() => import("@/components/pages/main/Home"));
 const UserProfile = lazy(() => import("@/components/pages/main/UserProfile"));
 
 const App = () => {
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+    window.onpopstate = function () {
+      window.history.pushState(null, "", window.location.href);
+    };
+  }, []);
+
   return (
     <Router>
       <Suspense fallback={<SocialLoader />}>
