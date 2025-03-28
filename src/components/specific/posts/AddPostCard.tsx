@@ -67,7 +67,7 @@ const AddPostCard = ({ user }: { user: userInterface }) => {
     <Card className="w-full rounded-xl pt-3 bg-cardGray border-none h-fit">
       <CardContent className="w-full">
         <div className="flex gap-3 items-center">
-          <Link to={"/profile/" + user.id}>
+          <Link to={"/profile/" + user?.id}>
             <Avatar className="w-12 h-12 bg-[#28343E]">
               <AvatarImage
                 src={user?.avatarUrl}
