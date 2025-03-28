@@ -1,5 +1,5 @@
 import { addPostAPI } from "@/APIs/postAPIs";
-import { userInterface } from "@/types/types";
+import { PostData, userInterface } from "@/types/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Image as ImageIcon, Loader, Video } from "lucide-react";
 import React, { useState } from "react";
@@ -16,6 +16,7 @@ const AddPostCard = ({ user }: { user: userInterface }) => {
   const [postImage, setPostImage] = useState<File | null>(null);
   const [caption, setCaption] = useState<string>("");
   const [isImageSelected, setIsImageSelected] = useState(false);
+  const [newPost, setNewPost] = useState<PostData | null>(null);
 
   const { mutate: AddPost, isPending } = useMutation({
     mutationFn: addPostAPI,
@@ -24,7 +25,22 @@ const AddPostCard = ({ user }: { user: userInterface }) => {
       setCaption("");
       setIsImageSelected(false);
       setPostImage(null);
+
+      setNewPost({
+        id: data?.data.id,
+        description: data?.data?.description,
+        content: data.data.content, // Assuming this is the URL string from backend
+        user_id: data.data.user_id,
+        user: user,
+        createdAt: data.data.createdAt || new Date().toISOString(),
+        updatedAt: data.data.updatedAt || new Date().toISOString(), // Fixed typo
+        likes: [],
+        comments: [],
+      });
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+    onError: () => {
+      toast.error("Failed to post. Try again.", { position: "top-right" });
     },
   });
 
@@ -39,6 +55,7 @@ const AddPostCard = ({ user }: { user: userInterface }) => {
   const handleCancel = () => {
     setPostImage(null);
     setIsImageSelected(false);
+    setNewPost(null);
   };
 
   const handleAddpost = () => {
@@ -60,12 +77,13 @@ const AddPostCard = ({ user }: { user: userInterface }) => {
       .split(" ")
       .map((word) => word.charAt(0).toUpperCase())
       .join("");
-    return initials.slice(0, 2); // Limit to 2 characters
+    return initials.slice(0, 2);
   };
 
   return (
     <Card className="w-full rounded-xl pt-3 bg-cardGray border-none h-fit">
       <CardContent className="w-full">
+        {/* Post Input Section */}
         <div className="flex gap-3 items-center">
           <Link to={"/profile/" + user?.id}>
             <Avatar className="w-12 h-12 bg-[#28343E]">
@@ -92,7 +110,8 @@ const AddPostCard = ({ user }: { user: userInterface }) => {
           />
         </div>
 
-        {isImageSelected && postImage && (
+        {/* Media Selection Preview (Before Submission) */}
+        {isImageSelected && postImage && !newPost && (
           <div className="w-full mt-5 pl-14">
             <MediaViewer postImage={postImage} />
             {isImageSelected && !caption.trim() && (
@@ -127,7 +146,43 @@ const AddPostCard = ({ user }: { user: userInterface }) => {
           </div>
         )}
 
-        {!isImageSelected && (
+        {/* Post Preview After Submission */}
+        {newPost && (
+          <div className="w-full mt-5 pl-14 border-t border-gray-700 pt-4">
+            <div className="flex gap-3">
+              <Avatar className="w-10 h-10 bg-[#28343E]">
+                <AvatarImage
+                  src={user?.avatarUrl}
+                  alt={`${user?.username || "User"}'s Avatar`}
+                  className="object-cover"
+                />
+                <AvatarFallback className="bg-[#28343E] text-white flex items-center justify-center text-lg font-semibold">
+                  {getInitials(user?.username)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <p className="text-white font-semibold">{user?.username}</p>
+                <p className="text-gray-400 text-sm">
+                  {new Date(newPost.createdAt).toLocaleString()}
+                </p>
+              </div>
+            </div>
+            <p className="text-white mt-2">{newPost.description}</p>
+            <div className="mt-3">
+              <MediaViewer postImage={newPost.content!} />{" "}
+              {/* Adjusted for URL */}
+            </div>
+            <Button
+              className="mt-3 text-white bg-gray-700 hover:bg-gray-600"
+              onClick={() => setNewPost(null)}
+            >
+              Add Another Post
+            </Button>
+          </div>
+        )}
+
+        {/* Media Selection Buttons */}
+        {!isImageSelected && !newPost && (
           <div className="flex items-center mt-5 gap-5 pl-14">
             <label
               htmlFor="image-picker"
@@ -147,7 +202,6 @@ const AddPostCard = ({ user }: { user: userInterface }) => {
               onChange={handleImageChange}
               className="hidden"
             />
-
             <label
               htmlFor="video-picker"
               className="cursor-pointer rounded-3xl border border-[#2B3A45] w-28 flex justify-center items-center gap-3 py-2"

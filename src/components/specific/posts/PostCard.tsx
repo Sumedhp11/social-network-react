@@ -1,8 +1,17 @@
 import { addCommentAPI, likePostAPI } from "@/APIs/postAPIs";
 import MediaViewer from "@/components/ui/MediaView";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Popover,
   PopoverContent,
@@ -17,8 +26,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Heart, MessageSquare } from "lucide-react";
 import moment from "moment";
 import { useState } from "react";
-import { Link } from "react-router";
 import toast from "react-hot-toast";
+import { Link } from "react-router";
 
 const PostCard = ({ post }: { post: PostData }) => {
   const [comment, setComment] = useState<string>("");
@@ -103,8 +112,30 @@ const PostCard = ({ post }: { post: PostData }) => {
             <p className="text-base font-medium text-white text-wrap w-full">
               {post.description}
             </p>
-
-            {post?.content && <MediaViewer postImage={post?.content} />}
+            {post.content && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div className="cursor-pointer">
+                    <MediaViewer postImage={post.content} />
+                  </div>
+                </DialogTrigger>
+                <DialogContent
+                  className="sm:max-w-[600px] bg-cardGray border-none ring-offset-0"
+                  closeClassName="text-white border-none"
+                >
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      {post.user?.username}'s Post
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      Posted {moment(post.createdAt).fromNow()}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <MediaViewer postImage={post.content} />
+                  <DialogFooter></DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
 
             <div className="w-full flex items-center gap-3">
               <div

@@ -22,8 +22,8 @@ export interface PostData {
   user?: userInterface;
   createdAt: Date;
   updatedAt: Date;
-  comments: [Comment];
-  likes: [Like];
+  comments: Comment[] | [];
+  likes: Like[] | [];
 }
 export interface Comment {
   id: number;
