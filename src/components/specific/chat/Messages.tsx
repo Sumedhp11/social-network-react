@@ -42,40 +42,47 @@ const Messages: React.FC<MessagesProps> = ({
   }, [inView, fetchNextPage, isFetchingNextPage, hasNextPage]);
 
   return (
-    <div className="w-full h-full flex flex-col py-2">
-      {isFetching || isFetchingNextPage ? (
-        <div className="flex justify-center items-center">
+    <div className="w-full h-full flex flex-col py-2 px-2">
+      {(isFetching || isFetchingNextPage) && (
+        <div className="flex justify-center items-center py-2">
           <Loader />
         </div>
-      ) : null}
-      {messages.length === 0 && !isFetching && !isFetchingNextPage && (
-        <p className="text-center font-medium text-sm text-black">
-          {`You Don't Have Any Messages Yet`}
-        </p>
       )}
-      <div ref={ref} />
-      {messages.length > 0 &&
-        messages
-          .slice()
-          .reverse()
-          .map((msg, index) => {
-            const isSender = Number(msg?.senderId) === Number(userId);
-            const isLastMessage = index === messages.length - 1;
-            return (
-              <MessageComponent
-                friend_avatar={friendAvatar}
-                key={msg?._id}
-                msg={msg}
-                isSender={isSender}
-                isLastMessage={isLastMessage}
-              />
-            );
-          })}
-      {userTyping ? (
-        <div className={`w-full flex flex-start pl-5 mt-4`}>
+
+      {messages.length === 0 && !isFetching && !isFetchingNextPage && (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-center font-medium text-sm text-black">{`You Don't Have Any Messages Yet`}</p>
+        </div>
+      )}
+
+      <div ref={ref} className="h-1" />
+
+      <div className="space-y-2">
+        {messages.length > 0 &&
+          messages
+            .slice()
+            .reverse()
+            .map((msg, index) => {
+              const isSender = Number(msg?.senderId) === Number(userId);
+              const isLastMessage = index === messages.length - 1;
+              return (
+                <MessageComponent
+                  friend_avatar={friendAvatar}
+                  key={msg?._id || index}
+                  msg={msg}
+                  isSender={isSender}
+                  isLastMessage={isLastMessage}
+                />
+              );
+            })}
+      </div>
+
+      {userTyping && (
+        <div className="w-full flex flex-start pl-5 mt-4">
           <TypingLoader />
         </div>
-      ) : null}
+      )}
+
       <div ref={endRef} />
     </div>
   );

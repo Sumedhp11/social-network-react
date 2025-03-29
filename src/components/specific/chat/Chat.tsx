@@ -39,6 +39,7 @@ const Chat = ({
   const markMessagesAsSeen = useCallback(() => {
     if (!data?.pages || !userId) return;
 
+
     const unseenMessages = data.pages
       .flatMap((page) => page.data)
       .filter(
@@ -161,13 +162,14 @@ const Chat = ({
   );
 
   useEffect(() => {
-    if (selectedUser.chat.id && data?.pages) {
+    if (selectedUser.chat.id && data && !isFetching) {
       markMessagesAsSeen();
       setNewMessagesAlert([]);
     }
   }, [
     selectedUser.chat.id,
-    data?.pages,
+    data,
+    isFetching,
     markMessagesAsSeen,
     setNewMessagesAlert,
   ]);
@@ -183,7 +185,7 @@ const Chat = ({
 
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="h-[12.1%]">
+      <div className="flex-none">
         <ChatHeader
           selectedUser={selectedUser}
           setSelectedUser={setSelectedUser}
@@ -191,19 +193,22 @@ const Chat = ({
           socket={socket}
         />
       </div>
-      <div className="h-[70%] overflow-hidden overflow-y-auto">
-        <Messages
-          messages={data?.pages.flatMap((page) => page.data) || []}
-          isFetching={isFetching}
-          isFetchingNextPage={isFetchingNextPage}
-          fetchNextPage={fetchNextPage}
-          friendAvatar={selectedUser.avatarUrl}
-          userId={userId}
-          userTyping={userTyping}
-          hasNextPage={hasNextPage}
-        />
+
+      <div className="flex-1 overflow-hidden relative">
+        <div className="absolute inset-0 overflow-y-auto pb-2">
+          <Messages
+            messages={data?.pages.flatMap((page) => page.data) || []}
+            isFetching={isFetching}
+            isFetchingNextPage={isFetchingNextPage}
+            fetchNextPage={fetchNextPage}
+            friendAvatar={selectedUser.avatarUrl}
+            userId={userId}
+            userTyping={userTyping}
+            hasNextPage={hasNextPage}
+          />
+        </div>
       </div>
-      <div className="">
+      <div className="flex-none mt-auto">
         <SendMessage
           userId={userId}
           socket={socket}

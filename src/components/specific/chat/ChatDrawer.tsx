@@ -119,8 +119,16 @@ const ChatDrawer = () => {
                 <X size={20} className="text-gray-300 hover:text-gray-500" />
               </DrawerClose>
             </DrawerHeader>
-            <div className="h-full">
-              {!selectedUser ? (
+            <div className="h-full flex flex-col">
+              {selectedUser ? (
+                <Chat
+                  socket={socket}
+                  selectedUser={selectedUser}
+                  setSelectedUser={setSelectedUser}
+                  setOpenDrawer={setOpenDrawer}
+                  setNewMessagesAlert={setNewMessagesAlert}
+                />
+              ) : (
                 <>
                   <div className="w-full flex justify-center">
                     <Input
@@ -133,24 +141,14 @@ const ChatDrawer = () => {
                       placeholder="Search users..."
                     />
                   </div>
-                  <div className="w-full h-full overflow-auto flex flex-col items-center py-4 px-1 bg-gray-50">
-                    <div className="w-full relative flex flex-col items-center space-y-5">
-                      <ChatList
-                        setSelectedUser={handleChatSelection}
-                        username={username}
-                        newMessagesAlert={newMessagesAlert}
-                      />
-                    </div>
+                  <div className="flex-1 overflow-y-auto py-4 px-1 bg-gray-50">
+                    <ChatList
+                      setSelectedUser={handleChatSelection}
+                      username={username}
+                      newMessagesAlert={newMessagesAlert}
+                    />
                   </div>
                 </>
-              ) : (
-                <Chat
-                  socket={socket}
-                  selectedUser={selectedUser}
-                  setSelectedUser={setSelectedUser}
-                  setOpenDrawer={setOpenDrawer}
-                  setNewMessagesAlert={setNewMessagesAlert}
-                />
               )}
             </div>
           </DrawerContent>

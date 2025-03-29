@@ -31,7 +31,7 @@ const ChatHeader = ({
           className="flex items-center gap-3"
           onClick={() => setOpenDrawer(false)}
         >
-          <Avatar className="w-11 h-11 ring-2">
+          <Avatar className="w-11 h-11">
             <AvatarImage
               src={
                 selectedUser.avatarUrl ??

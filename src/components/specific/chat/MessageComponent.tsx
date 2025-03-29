@@ -1,5 +1,7 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { messageInterface } from "@/types/types";
+import type { messageInterface } from "@/types/types";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const MessageComponent = ({
   isSender,
@@ -12,59 +14,66 @@ const MessageComponent = ({
   friend_avatar: string | null;
   isLastMessage: boolean;
 }) => {
+  // Format time from timestamp
+  const formatTime = (timestamp: string | Date) => {
+    if (!timestamp) return "";
+    const date = new Date(timestamp);
+    return `${date.getHours()}:${date
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
   return (
     <div
-      className={`flex items-end ${
+      className={cn(
+        "flex items-end gap-2 mb-2.5",
         isSender ? "justify-end" : "justify-start"
-      } mb-2`}
+      )}
     >
-      {/* Friend's Avatar for Received Messages */}
       {!isSender && (
-        <Avatar className="w-8 h-8 mr-2">
+        <Avatar className="w-8 h-8 flex-shrink-0">
           <AvatarImage
             src={
               friend_avatar ??
               "https://avatars.githubusercontent.com/u/124599?v=4"
             }
             alt="User Avatar"
-            className="object-contain"
+            className="object-cover"
           />
         </Avatar>
       )}
 
-      {/* Message Bubble */}
-      <div
-        className={`max-w-xs md:max-w-sm lg:max-w-md px-4 py-2 rounded-lg text-sm font-light shadow-md ${
-          isSender
-            ? "bg-green-500 text-white rounded-br-none"
-            : "bg-gray-500 text-white rounded-bl-none"
-        }`}
-      >
-        {/* Message Content */}
-        <p className="text-sm font-medium">{msg?.message}</p>
-
-        {/* Timestamp */}
-        <p className="text-sm font-medium mt-1 text-white text-right">
-          {new Date(msg?.createdAt).getHours()}:
-          {new Date(msg?.createdAt).getMinutes().toString().padStart(2, "0")}
-        </p>
-      </div>
-
-      {/* Seen Indicator for Last Sent Message */}
-      {isSender && isLastMessage && msg.seen_at && (
-        <div className="ml-2 animate-bounce">
-          <Avatar className="w-6 h-6">
-            <AvatarImage
-              src={
-                friend_avatar ??
-                "https://avatars.githubusercontent.com/u/124599?v=4"
-              }
-              alt="User Avatar"
-              className="object-contain"
-            />
-          </Avatar>
+      <div className="flex flex-col max-w-xs md:max-w-sm lg:max-w-md">
+        <div
+          className={cn(
+            "px-4 py-2.5 rounded-lg text-sm shadow-sm",
+            isSender
+              ? "bg-green-500 text-white rounded-br-none"
+              : "bg-gray-200 text-gray-800 rounded-bl-none dark:bg-gray-700 dark:text-gray-100"
+          )}
+        >
+          <p className="font-normal break-words">{msg?.message}</p>
         </div>
-      )}
+
+        <div
+          className={cn(
+            "flex items-center mt-1 text-xs",
+            isSender ? "justify-end" : "justify-start"
+          )}
+        >
+          <span className="text-gray-500 dark:text-gray-400">
+            {formatTime(msg?.createdAt)}
+          </span>
+
+          {isSender && isLastMessage && msg?.seen_at && (
+            <span className="ml-1.5 text-blue-500 flex items-center">
+              <Check size={12} className="mr-0.5" />
+              <span>Seen</span>
+            </span>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
