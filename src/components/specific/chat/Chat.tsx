@@ -1,4 +1,4 @@
-import { useSocketEvents, useUserId } from "@/hooks";
+import { useUserId } from "@/hooks";
 import { userInterface } from "@/types/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -43,6 +43,7 @@ const Chat = ({
       <div className="flex-1 overflow-hidden relative">
         <div className="absolute inset-0 overflow-y-auto pb-2">
           <Messages
+            setNewMessagesAlert={setNewMessagesAlert}
             socket={socket}
             selectedChatId={selectedChatId}
             queryClient={queryClient}

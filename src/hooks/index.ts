@@ -217,6 +217,7 @@ interface UseChatScrollOptions {
   bottomRef: React.RefObject<HTMLDivElement>;
   lastMessageRef: React.RefObject<HTMLDivElement>;
   messagesLength: number;
+  setNewMessagesAlert: (i: []) => void;
 }
 
 export function useChatScroll(params: UseChatScrollOptions) {
@@ -239,6 +240,7 @@ export function useChatScroll(params: UseChatScrollOptions) {
     if (messagesLength > 0 && bottomRef.current) {
       if (isFirstRender.current) {
         bottomRef.current.scrollIntoView({ behavior: "auto" });
+        params.setNewMessagesAlert([]);
         isFirstRender.current = false;
       } else if (inView || messagesLength < 3) {
         bottomRef.current.scrollIntoView({ behavior: "smooth" });

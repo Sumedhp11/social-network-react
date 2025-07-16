@@ -24,6 +24,7 @@ interface MessagesProps {
   selectedChatId: number;
   socket: Socket;
   setUserTyping: (value: boolean) => void;
+  setNewMessagesAlert: (i: []) => void;
 }
 
 const Messages: React.FC<MessagesProps> = ({
@@ -34,6 +35,7 @@ const Messages: React.FC<MessagesProps> = ({
   userTyping,
   socket,
   setUserTyping,
+  setNewMessagesAlert,
 }) => {
   const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useGetMessages({
@@ -53,6 +55,7 @@ const Messages: React.FC<MessagesProps> = ({
     bottomRef,
     lastMessageRef,
     messagesLength: reversedMessages.length,
+    setNewMessagesAlert,
   });
 
   const newMessageListener = useNewMessagesListener(
