@@ -111,8 +111,6 @@ export const VideoChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   /** ✅ End an active call */
   const endCall = () => {
-    console.log("worked");
-
     socket.emit(socketEvents.END_CALL, { recipientId: recipientId });
 
     peerConnectionRef.current?.close();
@@ -128,7 +126,6 @@ export const VideoChatProvider: React.FC<{ children: React.ReactNode }> = ({
     setOpenDrawer(false);
     setRecipientId(null);
     setRecipentUserDetails(null);
-    console.log("worked");
 
     toast.success("Call Ended");
   };

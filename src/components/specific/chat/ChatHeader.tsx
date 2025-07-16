@@ -2,6 +2,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useVideoChat } from "@/contexts/VideoChatContext";
 import { userInterface } from "@/types/types";
 import { ArrowLeft, Video } from "lucide-react";
+import React from "react";
 import { Link } from "react-router";
 import { Socket } from "socket.io-client";
 
@@ -61,4 +62,4 @@ const ChatHeader = ({
   );
 };
 
-export default ChatHeader;
+export default React.memo(ChatHeader);

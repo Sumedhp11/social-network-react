@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import useUserId from "@/hooks";
+import {useUserId} from "@/hooks";
 import type { PostData } from "@/types/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Clock, Heart, MessageSquare, Send } from "lucide-react";

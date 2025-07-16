@@ -1,7 +1,24 @@
-import { messageInterface } from "@/types/types";
 import { getAllMessages } from "@/APIs/messagesAPI";
-import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { cacheKeyStore } from "@/constants";
+import {
+  addNewMessageToCache,
+  mapDbMessageToTempMessage,
+  markMessageAsFailedWithCountdown,
+} from "@/helpers/socketHelpers";
+import { messageInterface } from "@/types/types";
+import {
+  InfiniteData,
+  QueryClient,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { useInView } from "react-intersection-observer";
 import { Socket } from "socket.io-client";
 
 type EventHandlers = {
@@ -51,7 +68,7 @@ const useGetMessages = ({
 } => {
   const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useInfiniteQuery<MessagesPage>({
-      queryKey: ["messages", chatId],
+      queryKey: [cacheKeyStore.messages, chatId],
       queryFn: ({ pageParam = 1 }) =>
         getAllMessages({ page: Number(pageParam), chatId }),
       getNextPageParam: (lastPage) => {
@@ -62,7 +79,7 @@ const useGetMessages = ({
           : undefined;
       },
       initialPageParam: 1,
-      staleTime: 0,
+      staleTime: 5 * 60 * 1000,
       retry: false,
       enabled: !!chatId,
     });
@@ -110,6 +127,138 @@ function useUserId(
   return [storedValue, setValue];
 }
 
-export default useUserId;
+export function useNewMessagesListener(
+  selectedChatId: number,
+  userId: number,
+  queryClient: QueryClient
+) {
+  return useCallback(
+    (data: { chatId: number; messageForRealTime: messageInterface }) => {
+      if (Number(data.chatId) !== selectedChatId) return;
 
-export { useSocketEvents, useGetMessages, useUserId };
+      addNewMessageToCache({
+        queryClient,
+        chatId: selectedChatId,
+        message: data.messageForRealTime,
+      });
+    },
+    [selectedChatId, userId, queryClient]
+  );
+}
+
+export function useMapDbMessageToTempMessageListener(
+  selectedChatId: number,
+  queryClient: QueryClient
+) {
+  return useCallback(
+    (data: { chatId: number; message: messageInterface; tempId: string }) => {
+      if (Number(data.chatId) !== selectedChatId) return;
+
+      mapDbMessageToTempMessage({
+        chatId: selectedChatId,
+        message: data.message,
+        tempId: data.tempId,
+        queryClient,
+      });
+    },
+    [selectedChatId, queryClient]
+  );
+}
+
+export function useFailMessageListener(queryClient: QueryClient) {
+  return useCallback((data: { chatId: number; tempId: string }) => {
+    markMessageAsFailedWithCountdown({
+      chatId: data.chatId,
+      tempId: data.tempId,
+      queryClient: queryClient,
+    });
+  }, []);
+}
+
+export const useStartTypingListener = ({
+  chatId,
+  setUserTyping,
+}: {
+  chatId: number;
+  setUserTyping: (data: boolean) => void;
+}) => {
+  return useCallback(
+    (data: { chatId: number }) => {
+      if (data.chatId === chatId) {
+        setTimeout(() => {
+          setUserTyping(true);
+        }, 500);
+      }
+    },
+    [chatId, setUserTyping]
+  );
+};
+
+export const useStopTypingListener = ({
+  chatId,
+  setUserTyping,
+}: {
+  chatId: number;
+  setUserTyping: (data: boolean) => void;
+}) => {
+  return useCallback(
+    (data: { chatId: number }) => {
+      if (data.chatId === chatId) {
+        setTimeout(() => {
+          setUserTyping(false);
+        }, 500);
+      }
+    },
+    [chatId, setUserTyping]
+  );
+};
+
+interface UseChatScrollOptions {
+  bottomRef: React.RefObject<HTMLDivElement>;
+  lastMessageRef: React.RefObject<HTMLDivElement>;
+  messagesLength: number;
+}
+
+export function useChatScroll(params: UseChatScrollOptions) {
+  const { bottomRef, lastMessageRef, messagesLength } = params;
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const isFirstRender = useRef(true);
+
+  const { ref: observerRef, inView } = useInView({
+    rootMargin: "-50px 0px 0px 0px",
+    skip: messagesLength < 3,
+  });
+
+  useLayoutEffect(() => {
+    if (lastMessageRef.current) {
+      observerRef(lastMessageRef.current);
+    }
+  }, [lastMessageRef, observerRef, messagesLength]);
+
+  useLayoutEffect(() => {
+    if (messagesLength > 0 && bottomRef.current) {
+      if (isFirstRender.current) {
+        bottomRef.current.scrollIntoView({ behavior: "auto" });
+        isFirstRender.current = false;
+      } else if (inView || messagesLength < 3) {
+        bottomRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [messagesLength, inView, bottomRef]);
+
+  useLayoutEffect(() => {
+    if (messagesLength < 3) {
+      setShowScrollButton(false);
+      return;
+    }
+    const timer = setTimeout(() => {
+      setShowScrollButton(!inView);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [inView, messagesLength]);
+
+  return { showScrollButton };
+}
+
+export { useGetMessages, useSocketEvents, useUserId };
+

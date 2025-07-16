@@ -19,7 +19,7 @@ import { Ellipsis, KeyRound, UserPen } from "lucide-react";
 import { useState } from "react";
 import EditProfileForm from "../../forms/EditProfileForm";
 import ChangePasswordForm from "@/components/forms/ChangePasswordForm";
-import useUserId from "@/hooks";
+import {useUserId} from "@/hooks";
 
 const UserCard = ({ userId }: { userId: number }) => {
   const [openPopup, setOpenPopup] = useState(false);

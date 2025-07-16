@@ -1,7 +1,7 @@
 import { getFriendsAPI, unFriendAPI } from "@/APIs/authAPIs";
 import Loader from "@/components/ui/Loader";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import useUserId from "@/hooks";
+import { useUserId } from "@/hooks";
 import { userInterface } from "@/types/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserRoundMinus } from "lucide-react";

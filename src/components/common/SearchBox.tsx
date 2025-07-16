@@ -75,7 +75,7 @@ const SearchBox = () => {
       />
 
       {(isLoading || data) && (
-        <ul className="absolute bg-white border border-gray-300 w-full mt-1 rounded z-30">
+        <ul className="absolute bg-white border border-gray-300 w-full mt-1 rounded z-30 max-h-[220px] overflow-auto">
           {isLoading && <Loader />}
           {!isLoading && isError && (
             <p className="p-2 text-red-500">Error fetching users.</p>

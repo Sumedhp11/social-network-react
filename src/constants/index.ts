@@ -16,6 +16,8 @@ const socketEvents = {
   JOINED: "JOINED",
   EXITED: "EXITED",
   NEW_MESSAGE: "NEW_MESSAGE",
+  MAP_MESSAGE: "MAP_MESSAGE",
+  FAIL_MESSAGE: "FAIL_MESSAGE",
   NEW_MESSAGE_ALERT: "NEW_MESSAGE_ALERT",
   STARTED_TYPING: "STARTED_TYPING",
   STOPPED_TYPING: "STOPPED_TYPING",
@@ -50,7 +52,9 @@ const ICE_SERVERS: RTCConfiguration = {
   iceCandidatePoolSize: 0,
 };
 
-
+const cacheKeyStore = {
+  messages: "messages",
+};
 
 export {
   server_url,
@@ -59,4 +63,5 @@ export {
   socket_url,
   ICE_SERVERS,
   stream_server_url,
+  cacheKeyStore,
 };

@@ -40,13 +40,15 @@ export interface Like {
 }
 export interface messageInterface {
   attachment: string[];
-  chatId: number;
+  chatId?: number;
   createdAt: Date;
   message: string;
   sender: { id: number; avatarUrl: string | null; username: string };
-  senderId: string;
+  senderId: number;
   updatedAt: Date;
   __v: number;
   _id: string | number;
-  seen_at: Date | null;
+  seen_at: Date | string | null;
+  status?: "sent" | "delivered" | "failed";
+  countdown?: number;
 }

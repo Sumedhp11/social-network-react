@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { socketEvents } from "@/constants";
+import { addNewMessageToCache, generateMessage } from "@/helpers/socketHelpers";
 import { userInterface } from "@/types/types";
-import { useQueryClient } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { SendHorizontal } from "lucide-react";
 import React, { ChangeEvent, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
@@ -13,32 +14,45 @@ const SendMessage = ({
   selectedUser,
   iamTyping,
   setIamTyping,
+  queryClient,
 }: {
   userId: number;
   socket: Socket;
   selectedUser: userInterface;
   iamTyping: boolean;
   setIamTyping: (value: boolean) => void;
+  queryClient: QueryClient;
 }) => {
-  const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!message.trim() || !userId) return;
+    if (!message.trim()) return;
 
+    const tempMessage = generateMessage(
+      message,
+      userId,
+      selectedUser.chat.id ?? undefined
+    );
+    addNewMessageToCache({
+      queryClient,
+      chatId: selectedUser.chat.id ?? undefined,
+      message: tempMessage,
+    });
     socket.emit(socketEvents.NEW_MESSAGE, {
       chatId: selectedUser.chat.id,
       memberIds: [selectedUser.friendId, userId],
       message,
+      tempId: tempMessage._id,
     });
-    queryClient.invalidateQueries({ queryKey: ["messages"] });
+
     setMessage("");
   };
 
   const handleTypingChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setMessage(e.target.value);
+    const value = e.target.value;
+    setMessage(value);
 
     if (!iamTyping && userId) {
       socket.emit(socketEvents.STARTED_TYPING, {
@@ -51,16 +65,16 @@ const SendMessage = ({
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
-  };
 
-  const handleBlur = () => {
-    if (iamTyping && userId) {
-      socket.emit(socketEvents.STOPPED_TYPING, {
-        memberIds: [selectedUser.friendId, userId],
-        chatId: selectedUser.chat.id,
-      });
-      setIamTyping(false);
-    }
+    typingTimeoutRef.current = setTimeout(() => {
+      if (iamTyping && userId) {
+        socket.emit(socketEvents.STOPPED_TYPING, {
+          memberIds: [selectedUser.friendId, userId],
+          chatId: selectedUser.chat.id,
+        });
+        setIamTyping(false);
+      }
+    }, 1500);
   };
 
   return (
@@ -70,7 +84,6 @@ const SendMessage = ({
         placeholder="Type your message..."
         value={message}
         onChange={handleTypingChange}
-        onBlur={handleBlur}
       />
 
       <Button

@@ -1,20 +1,20 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import type { messageInterface } from "@/types/types";
-import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { messageInterface } from "@/types/types";
+import { Check, Clock, MailCheck, XCircle } from "lucide-react";
+import React from "react";
 
-const MessageComponent = ({
-  isSender,
-  msg,
-  friend_avatar,
-  isLastMessage,
-}: {
+interface MessageComponentProps {
   isSender: boolean;
   msg: messageInterface;
   friend_avatar: string | null;
   isLastMessage: boolean;
-}) => {
-  // Format time from timestamp
+}
+
+const MessageComponent = React.forwardRef<
+  HTMLDivElement,
+  MessageComponentProps
+>(({ isSender, msg, friend_avatar, isLastMessage }, ref) => {
   const formatTime = (timestamp: string | Date) => {
     if (!timestamp) return "";
     const date = new Date(timestamp);
@@ -24,8 +24,13 @@ const MessageComponent = ({
       .padStart(2, "0")}`;
   };
 
+  const isFailed = msg?.status === "failed";
+  const isSending = msg?.status === "sent";
+  const isDelivered = msg?.status === "delivered";
+
   return (
     <div
+      ref={ref}
       className={cn(
         "flex items-end gap-2 mb-2.5",
         isSender ? "justify-end" : "justify-start"
@@ -49,16 +54,18 @@ const MessageComponent = ({
           className={cn(
             "px-4 py-2.5 rounded-lg text-sm shadow-sm",
             isSender
-              ? "bg-green-500 text-white rounded-br-none"
+              ? isFailed
+                ? "bg-red-500 text-white rounded-br-none"
+                : "bg-green-500 text-white rounded-br-none"
               : "bg-gray-200 text-gray-800 rounded-bl-none dark:bg-gray-700 dark:text-gray-100"
           )}
         >
-          <p className="font-normal break-words">{msg?.message}</p>
+          <p className="font-normal break-words text-center">{msg?.message}</p>
         </div>
 
         <div
           className={cn(
-            "flex items-center mt-1 text-xs",
+            "flex items-center mt-1 text-xs gap-2",
             isSender ? "justify-end" : "justify-start"
           )}
         >
@@ -66,16 +73,37 @@ const MessageComponent = ({
             {formatTime(msg?.createdAt)}
           </span>
 
-          {isSender && isLastMessage && msg?.seen_at && (
-            <span className="ml-1.5 text-blue-500 flex items-center">
-              <Check size={12} className="mr-0.5" />
-              <span>Seen</span>
-            </span>
+          {isSender && (
+            <>
+              {isLastMessage && isSending && (
+                <span className="text-yellow-500 flex items-center">
+                  <Clock size={12} className="mr-1" /> Sending...
+                </span>
+              )}
+              {isLastMessage && isDelivered && (
+                <span className="text-blue-500 flex items-center">
+                  <MailCheck size={12} className="mr-1" />
+                  Delivered
+                </span>
+              )}
+              {isLastMessage && isFailed && (
+                <span className="text-white flex items-center bg-red-600 px-2 py-0.5 rounded-full">
+                  <XCircle size={12} className="mr-1" />
+                  Removing in {msg.countdown}s
+                </span>
+              )}
+              {isLastMessage && msg?.seen_at && (
+                <span className="ml-1.5 text-blue-500 flex items-center">
+                  <Check size={12} className="mr-0.5" />
+                  <span>Seen</span>
+                </span>
+              )}
+            </>
           )}
         </div>
       </div>
     </div>
   );
-};
+});
 
-export default MessageComponent;
+export default React.memo(MessageComponent);
