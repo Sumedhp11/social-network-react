@@ -158,7 +158,7 @@ const ChatDrawer = () => {
         <Dialog onOpenChange={setOpenDialog} open={true}>
           <DialogContent className="md:w-[50%] md:h-[65%] bg-white border ">
             <DialogTitle className="hidden"></DialogTitle>
-            <div className="w-full h-full py-3 grid grid-rows-8 space-y-4">
+            <div className="w-full h-full py-3 grid grid-rows-8 space-y-4 max-h-[350px]">
               <div className="flex gap-3 items-center px-4 row-span-1">
                 <Avatar className="w-12 h-12 ring-2 ring-white">
                   <AvatarImage
