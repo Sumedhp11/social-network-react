@@ -2,8 +2,10 @@ import { getAllMessages } from "@/APIs/messagesAPI";
 import { cacheKeyStore } from "@/constants";
 import {
   addNewMessageToCache,
+  collectMarkSeenMessages,
   mapDbMessageToTempMessage,
   markMessageAsFailedWithCountdown,
+  updateMessageSeenAt,
 } from "@/helpers/socketHelpers";
 import { messageInterface } from "@/types/types";
 import {
@@ -130,7 +132,10 @@ function useUserId(
 export function useNewMessagesListener(
   selectedChatId: number,
   userId: number,
-  queryClient: QueryClient
+  queryClient: QueryClient,
+  socket: Socket,
+  selectedFriendId: number,
+  lastMessageRef: React.RefObject<HTMLDivElement>
 ) {
   return useCallback(
     (data: { chatId: number; messageForRealTime: messageInterface }) => {
@@ -141,6 +146,15 @@ export function useNewMessagesListener(
         chatId: selectedChatId,
         message: data.messageForRealTime,
       });
+      if (lastMessageRef.current) {
+        collectMarkSeenMessages({
+          chatId: selectedChatId,
+          messageId: String(data.messageForRealTime._id),
+          socket: socket,
+          friendId: selectedFriendId,
+          userId,
+        });
+      }
     },
     [selectedChatId, userId, queryClient]
   );
@@ -221,7 +235,8 @@ interface UseChatScrollOptions {
 }
 
 export function useChatScroll(params: UseChatScrollOptions) {
-  const { bottomRef, lastMessageRef, messagesLength } = params;
+  const { bottomRef, lastMessageRef, messagesLength, setNewMessagesAlert } =
+    params;
   const [showScrollButton, setShowScrollButton] = useState(false);
   const isFirstRender = useRef(true);
 
@@ -240,7 +255,7 @@ export function useChatScroll(params: UseChatScrollOptions) {
     if (messagesLength > 0 && bottomRef.current) {
       if (isFirstRender.current) {
         bottomRef.current.scrollIntoView({ behavior: "auto" });
-        params.setNewMessagesAlert([]);
+        setNewMessagesAlert([]);
         isFirstRender.current = false;
       } else if (inView || messagesLength < 3) {
         bottomRef.current.scrollIntoView({ behavior: "smooth" });
@@ -261,6 +276,21 @@ export function useChatScroll(params: UseChatScrollOptions) {
 
   return { showScrollButton };
 }
+
+export function useMessageSeenListener(queryClient: QueryClient) {
+  return useCallback(
+    (data: { chatId: number; messageIds: string[]; seen_at: Date }) => {
+      updateMessageSeenAt({
+        chatId: Number(data.chatId),
+        messageIds: data.messageIds,
+        seenAt: data.seen_at,
+        queryClient,
+      });
+    },
+    []
+  );
+}
+
 
 export { useGetMessages, useSocketEvents, useUserId };
 

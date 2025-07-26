@@ -75,18 +75,18 @@ const MessageComponent = React.forwardRef<
 
           {isSender && (
             <>
-              {isLastMessage && isSending && (
+              {isLastMessage && isSending && !msg?.seen_at && (
                 <span className="text-yellow-500 flex items-center">
                   <Clock size={12} className="mr-1" /> Sending...
                 </span>
               )}
-              {isLastMessage && isDelivered && (
+              {isLastMessage && isDelivered && !msg?.seen_at && (
                 <span className="text-blue-500 flex items-center">
                   <MailCheck size={12} className="mr-1" />
                   Delivered
                 </span>
               )}
-              {isLastMessage && isFailed && (
+              {isLastMessage && isFailed && !msg?.seen_at && (
                 <span className="text-white flex items-center bg-red-600 px-2 py-0.5 rounded-full">
                   <XCircle size={12} className="mr-1" />
                   Removing in {msg.countdown}s

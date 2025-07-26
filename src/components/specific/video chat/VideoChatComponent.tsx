@@ -18,7 +18,7 @@ const VideoChatComponent = () => {
       className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-xl overflow-hidden"
       style={{ maxHeight: "100vh" }}
     >
-      <div className="relative flex-1 p-4">
+      <div className="relative flex-1 ">
         <div className="w-full h-full rounded-xl overflow-hidden shadow-lg bg-gray-200 border border-gray-300">
           {mainStream ? (
             <div className="w-full h-full pointer-events-none">

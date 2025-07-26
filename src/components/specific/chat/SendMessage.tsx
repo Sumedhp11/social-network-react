@@ -1,7 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { socketEvents } from "@/constants";
-import { addNewMessageToCache, generateMessage } from "@/helpers/socketHelpers";
+import {
+  addNewMessageToCache,
+  generateMessage,
+  scrollToBottomHelper,
+} from "@/helpers/socketHelpers";
 import { userInterface } from "@/types/types";
 import { QueryClient } from "@tanstack/react-query";
 import { SendHorizontal } from "lucide-react";
@@ -15,6 +19,7 @@ const SendMessage = ({
   iamTyping,
   setIamTyping,
   queryClient,
+  bottomRef,
 }: {
   userId: number;
   socket: Socket;
@@ -22,6 +27,7 @@ const SendMessage = ({
   iamTyping: boolean;
   setIamTyping: (value: boolean) => void;
   queryClient: QueryClient;
+  bottomRef: React.RefObject<HTMLDivElement>;
 }) => {
   const [message, setMessage] = useState("");
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -48,6 +54,7 @@ const SendMessage = ({
     });
 
     setMessage("");
+    scrollToBottomHelper(bottomRef);
   };
 
   const handleTypingChange = (e: ChangeEvent<HTMLInputElement>) => {

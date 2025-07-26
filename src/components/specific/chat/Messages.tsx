@@ -1,11 +1,13 @@
 import Loader from "@/components/ui/Loader";
 import TypingLoader from "@/components/ui/TypingLoader";
 import { socketEvents } from "@/constants";
+
 import {
   useChatScroll,
   useFailMessageListener,
   useGetMessages,
   useMapDbMessageToTempMessageListener,
+  useMessageSeenListener,
   useNewMessagesListener,
   useSocketEvents,
   useStartTypingListener,
@@ -15,6 +17,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef } from "react";
 import { Socket } from "socket.io-client";
 import MessageComponent from "./MessageComponent";
+import { scrollToBottomHelper } from "@/helpers/socketHelpers";
 
 interface MessagesProps {
   queryClient: QueryClient;
@@ -25,6 +28,8 @@ interface MessagesProps {
   socket: Socket;
   setUserTyping: (value: boolean) => void;
   setNewMessagesAlert: (i: []) => void;
+  selectedFriendId: number;
+  bottomRef: React.RefObject<HTMLDivElement>;
 }
 
 const Messages: React.FC<MessagesProps> = ({
@@ -36,6 +41,8 @@ const Messages: React.FC<MessagesProps> = ({
   socket,
   setUserTyping,
   setNewMessagesAlert,
+  selectedFriendId,
+  bottomRef,
 }) => {
   const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useGetMessages({
@@ -47,7 +54,7 @@ const Messages: React.FC<MessagesProps> = ({
   }, [data]);
 
   const reversedMessages = useMemo(() => [...messages].reverse(), [messages]);
-  const bottomRef = useRef<HTMLDivElement>(null);
+
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -61,7 +68,10 @@ const Messages: React.FC<MessagesProps> = ({
   const newMessageListener = useNewMessagesListener(
     selectedChatId,
     userId,
-    queryClient
+    queryClient,
+    socket,
+    selectedFriendId,
+    lastMessageRef
   );
   const mapMessageListener = useMapDbMessageToTempMessageListener(
     selectedChatId,
@@ -77,20 +87,18 @@ const Messages: React.FC<MessagesProps> = ({
     setUserTyping,
   });
 
+  const seenMessageListener = useMessageSeenListener(queryClient);
+
   const eventHandler = {
     [socketEvents.NEW_MESSAGE]: newMessageListener,
     [socketEvents.MAP_MESSAGE]: mapMessageListener,
     [socketEvents.FAIL_MESSAGE]: failMessageListener,
     [socketEvents.STARTED_TYPING]: userStartTypingListener,
     [socketEvents.STOPPED_TYPING]: userStopTypingListener,
+    [socketEvents.MESSAGE_SEEN]: seenMessageListener,
   };
 
   useSocketEvents(socket, eventHandler);
-
-  const scrollToBottom = () => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
     if (isFetchingNextPage && scrollContainerRef.current) {
       const prevScrollHeight = scrollContainerRef.current.scrollHeight;
@@ -168,7 +176,7 @@ const Messages: React.FC<MessagesProps> = ({
 
       {showScrollButton && (
         <button
-          onClick={scrollToBottom}
+          onClick={() => scrollToBottomHelper(bottomRef)}
           className="absolute bottom-4 right-4 bg-blue-500 text-white px-3 py-1 rounded shadow-lg text-sm hover:bg-blue-600 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400"
           aria-label="Scroll to latest messages"
           tabIndex={0}

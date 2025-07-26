@@ -155,12 +155,12 @@ const ChatDrawer = () => {
         </Drawer>
       )}
       {openDialog ? (
-        <Dialog onOpenChange={setOpenDialog} open={true}>
-          <DialogContent className="md:w-[50%] md:h-[65%] bg-white border ">
-            <DialogTitle className="hidden"></DialogTitle>
-            <div className="w-full h-full py-3 grid grid-rows-8 space-y-4 max-h-[350px]">
-              <div className="flex gap-3 items-center px-4 row-span-1">
-                <Avatar className="w-12 h-12 ring-2 ring-white">
+        <Dialog onOpenChange={setOpenDialog} open={openDialog}>
+          <DialogContent className="h-[600px] max-h-[90vh] w-full sm:max-w-[70%] md:max-w-[50%] lg:max-w-[35%] rounded-sm bg-white  border ">
+            <DialogTitle className="sr-only"></DialogTitle>
+            <div className="w-full h-full flex flex-col space-y-3 border border-black">
+              <div className="flex gap-3 items-center px-3 py-1.5 max-h-[400px]">
+                <Avatar className="w-12 h-12 ring-2 ring-red-400">
                   <AvatarImage
                     src={
                       selectedUser?.avatarUrl
@@ -176,10 +176,10 @@ const ChatDrawer = () => {
                 <h2 className="text-lg font-medium leading-none tracking-tight text-black">
                   {selectedUser?.username
                     ? selectedUser.username
-                    : recipentUserDetails?.username}
+                    : recipentUserDetails?.username}{" "}
                 </h2>
               </div>
-              <div className="row-span-7">
+              <div className="flex-1">
                 <VideoChatComponent />
               </div>
             </div>

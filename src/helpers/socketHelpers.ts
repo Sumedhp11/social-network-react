@@ -1,7 +1,8 @@
-import { cacheKeyStore } from "@/constants";
+import { cacheKeyStore, socketEvents } from "@/constants";
 import { MessagesPage } from "@/hooks";
 import { messageInterface } from "@/types/types";
 import { InfiniteData, QueryClient } from "@tanstack/react-query";
+import { Socket } from "socket.io-client";
 
 export function addNewMessageToCache({
   queryClient,
@@ -142,3 +143,88 @@ export function markMessageAsFailedWithCountdown({
     );
   }, 1000);
 }
+
+export function collectMarkSeenMessages({
+  socket,
+  chatId,
+  friendId,
+  messageId,
+  userId,
+}: {
+  socket: Socket;
+  chatId: number;
+  messageId: string;
+  friendId?: number;
+  userId: number;
+}) {
+  const seenMessageIds = new Set<string>();
+
+  if (seenMessageIds.has(messageId)) return;
+  seenMessageIds.add(messageId);
+
+  let timeoutId: NodeJS.Timeout | null = null;
+  const emitSeenMessage = () => {
+    console.log(
+      "Emitting seen message for chatId:",
+      chatId,
+      "messageIds:",
+      Array.from(seenMessageIds),
+      "friendId: ",
+      friendId,
+      "userId: ",
+      userId
+    );
+
+    if (seenMessageIds.size > 0) {
+      socket.emit(socketEvents.MESSAGE_SEEN, {
+        chatId,
+        messageIds: Array.from(seenMessageIds),
+        memberId: friendId,
+      });
+
+      seenMessageIds.clear();
+    }
+  };
+
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+  }
+  timeoutId = setTimeout(emitSeenMessage, 300);
+}
+
+export function updateMessageSeenAt({
+  chatId,
+  queryClient,
+  messageIds,
+  seenAt,
+}: {
+  chatId: number;
+  queryClient: QueryClient;
+  messageIds: string[];
+  seenAt: Date;
+}) {
+  queryClient.setQueryData<InfiniteData<MessagesPage>>(
+    [cacheKeyStore.messages, chatId],
+    (oldData) => {
+      if (!oldData) return oldData;
+
+      return {
+        ...oldData,
+        pages: oldData.pages.map((page) => {
+          return {
+            ...page,
+            data: page.data.map((message) =>
+              messageIds.includes(String(message._id))
+                ? { ...message, seen_at: seenAt }
+                : message
+            ),
+          };
+        }),
+      };
+    }
+  );
+}
+
+export const scrollToBottomHelper = (bottomRef: React.RefObject<HTMLDivElement>) => {
+  bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+};

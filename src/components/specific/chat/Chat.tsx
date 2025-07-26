@@ -1,7 +1,7 @@
 import { useUserId } from "@/hooks";
 import { userInterface } from "@/types/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import ChatHeader from "./ChatHeader";
 import Messages from "./Messages";
@@ -25,9 +25,12 @@ const Chat = ({
   const [userId] = useUserId("userId", 0);
   if (!userId) return;
   const selectedChatId = Number(selectedUser.chat.id);
+  const selectedFriendId = Number(selectedUser.friendId);
+
   const queryClient = useQueryClient();
   const [iamTyping, setIamTyping] = useState(false);
   const [userTyping, setUserTyping] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -51,11 +54,14 @@ const Chat = ({
             userId={userId}
             userTyping={userTyping}
             setUserTyping={setUserTyping}
+            selectedFriendId={selectedFriendId}
+            bottomRef={bottomRef}
           />
         </div>
       </div>
       <div className="flex-none mt-auto">
         <SendMessage
+          bottomRef={bottomRef}
           queryClient={queryClient}
           userId={userId}
           socket={socket}
