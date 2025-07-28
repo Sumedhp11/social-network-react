@@ -22,6 +22,7 @@ interface VideoChatContextProps {
     id: number;
     username: string;
   } | null;
+  streamKey: number;
 }
 
 const VideoChatContext = createContext<VideoChatContextProps | null>(null);
@@ -45,6 +46,7 @@ export const VideoChatProvider: React.FC<{ children: React.ReactNode }> = ({
     id: number;
     username: string;
   } | null>(null);
+  const [streamKey, setStreamKey] = useState(Date.now());
 
   /** ✅ Call another user */
   const callUser = async (userId: number) => {
@@ -118,9 +120,11 @@ export const VideoChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
     localStream?.getTracks().forEach((track) => track.stop());
     remoteStream?.getTracks().forEach((track) => track.stop());
-
-    setLocalStream(null);
-    setRemoteStream(null);
+    setTimeout(() => {
+      setLocalStream(null);
+      setRemoteStream(null);
+      setStreamKey(Date.now());
+    }, 300);
     setIsInCall(false);
     setOpenDialog(false);
     setOpenDrawer(false);
@@ -231,6 +235,7 @@ export const VideoChatProvider: React.FC<{ children: React.ReactNode }> = ({
         openDialog,
         setOpenDialog,
         recipentUserDetails,
+        streamKey,
       }}
     >
       {children}

@@ -5,7 +5,8 @@ import { useState } from "react";
 import ReactPlayer from "react-player";
 
 const VideoChatComponent = () => {
-  const { isInCall, localStream, remoteStream, endCall } = useVideoChat();
+  const { isInCall, localStream, remoteStream, endCall, streamKey } =
+    useVideoChat();
   const [isRemoteMain, setIsRemoteMain] = useState(true);
 
   const mainStream = isRemoteMain ? remoteStream : localStream;
@@ -23,7 +24,7 @@ const VideoChatComponent = () => {
           {mainStream ? (
             <div className="w-full h-full pointer-events-none">
               <ReactPlayer
-                key={`main-${isRemoteMain}`}
+                key={`main-${isRemoteMain}-${streamKey}`}
                 url={mainStream}
                 playing
                 muted={mainLabel === "You"}
@@ -67,7 +68,7 @@ const VideoChatComponent = () => {
           >
             <div className="w-full h-full pointer-events-none">
               <ReactPlayer
-                key={`pip-${isRemoteMain}`}
+                key={`pip-${isRemoteMain}-${streamKey}`}
                 url={pipStream}
                 playing
                 muted={pipLabel === "You"}
