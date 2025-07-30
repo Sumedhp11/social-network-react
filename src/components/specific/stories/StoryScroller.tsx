@@ -3,6 +3,7 @@ import { cacheKeyStore } from "@/constants";
 import { userInterface } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import StoryAvatar from "./StoryAvatar";
+import StoryLoader from "@/components/ui/storyLoader";
 
 export interface Story {
   id: number;
@@ -28,7 +29,13 @@ const StoryScroller = ({ userData }: { userData: userInterface }) => {
   });
 
   if (isLoading || !data) {
-    return <div>Loading...</div>;
+    return (
+      <div className="py-4 px-2 flex items-center gap-5 overflow-x-auto scrollbar-hide">
+        {[...Array(10)].map((_, i) => (
+          <StoryLoader key={i} />
+        ))}
+      </div>
+    );
   }
 
   const userStory = data[0];

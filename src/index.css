@@ -71,15 +71,32 @@
 }
 
 .scrollbar-hide {
-  -ms-overflow-style: none; 
-  scrollbar-width: none; 
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 @keyframes progress {
-            from { width: 0%; }
-            to { width: 100%; }
-          }
-          .animate-progress {
-            animation-name: progress;
-            animation-timing-function: linear;
-          }
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+.animate-progress {
+  animation-name: progress;
+  animation-timing-function: linear;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
+}
