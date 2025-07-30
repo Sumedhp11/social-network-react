@@ -47,7 +47,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
             setHasUnread(true);
             toast.success(data.message, {
               position: "top-right",
-              duration: 5000,
+              duration: 3000,
             });
 
             // Invalidate notifications cache
