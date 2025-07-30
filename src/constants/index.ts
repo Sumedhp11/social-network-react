@@ -54,6 +54,7 @@ const ICE_SERVERS: RTCConfiguration = {
 
 const cacheKeyStore = {
   messages: "messages",
+  stories: "stories",
 };
 
 export {
