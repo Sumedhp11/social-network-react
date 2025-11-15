@@ -88,7 +88,6 @@ const LoginForm = () => {
       credentials: credentialResponse,
     });
   };
-
   return (
     <div className="space-y-2">
       <Form {...form}>
@@ -163,7 +162,7 @@ const LoginForm = () => {
           </div>
         </form>
       </Form>
-      {!googleLoading ? (
+      {/* {!googleLoading ? (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_ID!}>
           <GoogleLogin
             text="continue_with"
@@ -189,7 +188,7 @@ const LoginForm = () => {
         <p className="text-red-500 text-sm font-normal text-center mt-2">
           Google login failed. Please try again.
         </p>
-      )}
+      )} */}
       <p className="text-center text-white text-base">
         <span>New Here?</span>
         <Link to={"/register"} className="text-[#189FF2] ml-1">
