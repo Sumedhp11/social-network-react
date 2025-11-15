@@ -14,19 +14,17 @@ export default defineConfig(({ mode }) => {
     },
 
     server: isProduction
-      ? {
-          proxy: {
-            "/api": {
-              target: "http://72.61.171.104:3001",
-              changeOrigin: true,
-              secure: false,
-            },
-          },
-        }
+      ? undefined
       : {
           proxy: {
             "/api": {
               target: "http://localhost:8080",
+              changeOrigin: true,
+              secure: false,
+            },
+            "/socket.io": {
+              target: "http://localhost:8080",
+              ws: true,
               changeOrigin: true,
               secure: false,
             },

@@ -3,6 +3,7 @@ import { MessagesPage } from "@/hooks";
 import { messageInterface } from "@/types/types";
 import { InfiniteData, QueryClient } from "@tanstack/react-query";
 import { Socket } from "socket.io-client";
+import { v4 as uuid } from "uuid";
 
 export function addNewMessageToCache({
   queryClient,
@@ -34,7 +35,7 @@ export function generateMessage(
   chatId?: number
 ) {
   const messageObj: messageInterface = {
-    _id: crypto.randomUUID(),
+    _id: uuid(),
     chatId: chatId,
     message: message,
     senderId: userId,
