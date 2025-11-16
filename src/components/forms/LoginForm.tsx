@@ -1,4 +1,4 @@
-import { loginAPI } from "@/APIs/authAPIs";
+import { loginAPI, loginWithGoogleAPI } from "@/APIs/authAPIs";
 import { useUserId } from "@/hooks";
 import { loginValidator } from "@/validators/loginValidator";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,10 +24,15 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import {
+  CredentialResponse,
+  GoogleLogin,
+  GoogleOAuthProvider,
+} from "@react-oauth/google";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  // const [googleLoading, setGoogleLoading] = useState<boolean>(false);
+  const [googleLoading, setGoogleLoading] = useState<boolean>(false);
   const [, setUserId] = useUserId("userId", 0);
   const navigate = useNavigate();
 
@@ -48,31 +53,31 @@ const LoginForm = () => {
     },
   });
 
-  // const {
-  //   mutate: login_with_google,
-  //   isError,
-  //   isPending,
-  // } = useMutation({
-  //   mutationFn: loginWithGoogleAPI,
-  //   onMutate: () => {
-  //     setGoogleLoading(true);
-  //     toast.loading("Logging in with Google...");
-  //   },
-  //   onSuccess: (data) => {
-  //     toast.dismiss();
-  //     toast.success(data?.message);
-  //     setUserId(data.data.userId as number);
-  //     navigate("/");
-  //   },
-  //   onError: (error) => {
-  //     toast.dismiss();
-  //     console.error("Google Login API failed:", error);
-  //     toast.error("Google login failed. Please try again.");
-  //   },
-  //   onSettled: () => {
-  //     setGoogleLoading(false);
-  //   },
-  // });
+  const {
+    mutate: login_with_google,
+    isError,
+    isPending,
+  } = useMutation({
+    mutationFn: loginWithGoogleAPI,
+    onMutate: () => {
+      setGoogleLoading(true);
+      toast.loading("Logging in with Google...");
+    },
+    onSuccess: (data) => {
+      toast.dismiss();
+      toast.success(data?.message);
+      setUserId(data.data.userId as number);
+      navigate("/");
+    },
+    onError: (error) => {
+      toast.dismiss();
+      console.error("Google Login API failed:", error);
+      toast.error("Google login failed. Please try again.");
+    },
+    onSettled: () => {
+      setGoogleLoading(false);
+    },
+  });
 
   async function onSubmit(values: z.infer<typeof loginValidator>) {
     try {
@@ -82,11 +87,11 @@ const LoginForm = () => {
     }
   }
 
-  // const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
-  //   login_with_google({
-  //     credentials: credentialResponse,
-  //   });
-  // };
+  const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
+    login_with_google({
+      credentials: credentialResponse,
+    });
+  };
   return (
     <div className="space-y-2">
       <Form {...form}>
@@ -152,7 +157,7 @@ const LoginForm = () => {
           <div className="space-y-3">
             <Button
               name="submit-login"
-              disabled={!form.formState.isValid || loginPending}
+              disabled={!form.formState.isValid || isPending || loginPending}
               type="submit"
               className="bg-[#189FF2] hover:bg-blue-600 w-full"
             >
@@ -161,7 +166,7 @@ const LoginForm = () => {
           </div>
         </form>
       </Form>
-      {/* {!googleLoading ? (
+      {!googleLoading ? (
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_ID!}>
           <GoogleLogin
             text="continue_with"
@@ -187,7 +192,7 @@ const LoginForm = () => {
         <p className="text-red-500 text-sm font-normal text-center mt-2">
           Google login failed. Please try again.
         </p>
-      )} */}
+      )}
       <p className="text-center text-white text-base">
         <span>New Here?</span>
         <Link to={"/register"} className="text-[#189FF2] ml-1">
