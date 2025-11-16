@@ -32,10 +32,16 @@ const loginAPI = async ({
   password: string;
 }) => {
   try {
-    const res = await axios.post(`${server_url}/user/login`, {
-      username,
-      password,
-    });
+    const res = await axios.post(
+      `${server_url}/user/login`,
+      {
+        username,
+        password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
     return res.data;
   } catch (error) {
     console.log(error);
@@ -47,7 +53,9 @@ const loginAPI = async ({
 };
 const registerAPI = async (formData: FormData) => {
   try {
-    const res = await axios.post(`${server_url}/user/register`, formData);
+    const res = await axios.post(`${server_url}/user/register`, formData, {
+      withCredentials: true,
+    });
     return res.data;
   } catch (error) {
     console.log(error);
@@ -222,10 +230,16 @@ const verifyUserAPI = async ({
   otpToken: string;
 }) => {
   try {
-    const res = await axios.post(`${server_url}/user/verify`, {
-      verification_code: verification_code,
-      otpToken,
-    });
+    const res = await axios.post(
+      `${server_url}/user/verify`,
+      {
+        verification_code: verification_code,
+        otpToken,
+      },
+      {
+        withCredentials: true,
+      }
+    );
     return res.data;
   } catch (error) {
     if (isAxiosError(error)) {
@@ -244,11 +258,17 @@ const changePasswordAPI = async ({
   isGoogleSignedIn?: boolean;
 }) => {
   try {
-    const res = await axiosInstance.post(`/user/change-password`, {
-      current_password,
-      new_password,
-      isGoogleSignedIn,
-    });
+    const res = await axiosInstance.post(
+      `/user/change-password`,
+      {
+        current_password,
+        new_password,
+        isGoogleSignedIn,
+      },
+      {
+        withCredentials: true,
+      }
+    );
     return res.data;
   } catch (error) {
     console.log(error);
@@ -260,9 +280,15 @@ const changePasswordAPI = async ({
 
 const sendResetPasswordMailAPI = async (email: string) => {
   try {
-    const res = await axiosInstance.post(`/user/send-reset-password-mail`, {
-      email,
-    });
+    const res = await axiosInstance.post(
+      `/user/send-reset-password-mail`,
+      {
+        email,
+      },
+      {
+        withCredentials: true,
+      }
+    );
     return res.data;
   } catch (error) {
     console.log(error);
@@ -280,10 +306,16 @@ const resetPasswordAPI = async ({
   new_password: string;
 }) => {
   try {
-    const res = await axiosInstance.post(`/user/reset-password`, {
-      otpToken,
-      new_password,
-    });
+    const res = await axiosInstance.post(
+      `/user/reset-password`,
+      {
+        otpToken,
+        new_password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
 
     return res.data.message;
   } catch (error) {
